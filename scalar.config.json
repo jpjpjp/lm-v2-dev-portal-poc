@@ -1,158 +1,32 @@
 {
-  "title": "Lunch Money API Documentation",
-  "description": "Official documentation for the Lunch Money API, including v2 and legacy v1 guides.",
-  "apiReferences": [
+  "$schema": "https://cdn.scalar.com/schema/scalar-config.json",
+  "subdomain": "lm-v2-api-evaluation-service",
+  "references": [
     {
-      "id": "v2",
       "name": "Lunch Money API v2",
-      "spec": "api/v2/lunch-money-api-v2.yaml"
+      "path": "api/v2/lunch-money-api-v2.yaml"
     }
   ],
   "guides": [
     {
-      "id": "getting-started",
-      "name": "Getting Started",
-      "file": "guides/_getting_started.md"
-    },
-    {
-      "id": "faq",
-      "name": "FAQ",
-      "file": "guides/_faq.md"
-    },
-    {
-      "id": "changelog",
-      "name": "Changelog",
-      "file": "guides/_changelog.md"
-    },
-    {
-      "id": "awesome-projects",
-      "name": "Awesome Projects",
-      "file": "guides/_awesome_projects.md"
-    },
-    {
-      "id": "awesome-projects-archive",
-      "name": "Awesome Projects Archive",
-      "file": "guides/_awesome_projects_archive.md"
-    },
-    {
-      "id": "appendix",
-      "name": "Appendix",
-      "file": "guides/_appendix.md"
-    },
-    {
-      "id": "index-v1",
-      "name": "Legacy v1 Overview",
-      "file": "guides/index-v1.md"
-    },
-    {
-      "id": "v2-api-overview",
-      "name": "v2 API Overview",
-      "file": "guides/v2-api-overview.md"
-    },
-    {
-      "id": "v2-api-changelog",
-      "name": "v2 API Changelog",
-      "file": "guides/v2-api-changelog.md"
-    },
-    {
-      "id": "v2-version-history",
-      "name": "v2 Version History",
-      "file": "guides/v2-version-history.md"
-    },
-
-    {
-      "id": "v1-assets",
-      "name": "Assets",
-      "file": "api/v1/assets.md"
-    },
-    {
-      "id": "v1-budget",
-      "name": "Budget",
-      "file": "api/v1/budget.md"
-    },
-    {
-      "id": "v1-categories",
-      "name": "Categories",
-      "file": "api/v1/categories.md"
-    },
-    {
-      "id": "v1-crypto",
-      "name": "Crypto",
-      "file": "api/v1/crypto.md"
-    },
-    {
-      "id": "v1-plaid-accounts",
-      "name": "Plaid Accounts",
-      "file": "api/v1/plaid_accounts.md"
-    },
-    {
-      "id": "v1-recurring-expenses",
-      "name": "Recurring Expenses",
-      "file": "api/v1/recurring_expenses.md"
-    },
-    {
-      "id": "v1-recurring-items",
-      "name": "Recurring Items",
-      "file": "api/v1/recurring_items.md"
-    },
-    {
-      "id": "v1-tags",
-      "name": "Tags",
-      "file": "api/v1/tags.md"
-    },
-    {
-      "id": "v1-transactions",
-      "name": "Transactions",
-      "file": "api/v1/transactions.md"
-    },
-    {
-      "id": "v1-user",
-      "name": "User",
-      "file": "api/v1/user.md"
-    }
-  ],
-  "sidebar": [
-    {
-      "type": "apiReference",
-      "id": "v2"
-    },
-    {
-      "type": "category",
-      "name": "Guides",
-      "items": [
-        { "type": "guide", "id": "getting-started" },
-        { "type": "guide", "id": "faq" },
-        { "type": "guide", "id": "changelog" },
-        { "type": "guide", "id": "awesome-projects" },
-        { "type": "guide", "id": "awesome-projects-archive" },
-        { "type": "guide", "id": "appendix" },
-        { "type": "guide", "id": "v2-api-overview" },
-        { "type": "guide", "id": "v2-api-changelog" },
-        { "type": "guide", "id": "v2-version-history" }
+      "name": "General Guides",
+      "folder": "guides",
+      "exclude": [
+        "_assets.md",
+        "_budget.md",
+        "_categories.md",
+        "_crypto.md",
+        "_plaid_accounts.md",
+        "_recurring_expenses.md",
+        "_recurring_items.md",
+        "_tags.md",
+        "_transactions.md",
+        "_user.md"
       ]
     },
     {
-      "type": "category",
       "name": "Legacy: Lunch Money API v1",
-      "items": [
-        { "type": "guide", "id": "index-v1" },
-        {
-          "type": "category",
-          "name": "Endpoints",
-          "items": [
-            { "type": "guide", "id": "v1-user" },
-            { "type": "guide", "id": "v1-categories" },
-            { "type": "guide", "id": "v1-tags" },
-            { "type": "guide", "id": "v1-transactions" },
-            { "type": "guide", "id": "v1-recurring-expenses" },
-            { "type": "guide", "id": "v1-recurring-items" },
-            { "type": "guide", "id": "v1-budget" },
-            { "type": "guide", "id": "v1-assets" },
-            { "type": "guide", "id": "v1-plaid-accounts" },
-            { "type": "guide", "id": "v1-crypto" }
-          ]
-        }
-      ]
+      "folder": "api/v1"
     }
   ]
 }
