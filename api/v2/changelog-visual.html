@@ -1,0 +1,457 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lunch Money API Visual Changelog</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <style>
+            .new { color: green; }
+            .deleted { color: red; }
+            .renamed { color: orange; }
+            .moved { color: blueviolet; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1 style="text-align: center;">Lunch Money v2 API <br> Object Changes</h1>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td id="user-object-row"></td>
+                        <td><a href="https://lunchmoney.dev/#user-object" target="_blank">v1 User Object</a></td>
+                        <td><a href="../#/schemas/userObject" target="_blank">v2 User Object</a></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="changelog#the-user-object">
+                                User<br>Object<br>Changelog
+                            </a>
+                        </td>
+                        <td>
+                            <ul>
+                                <li class="renamed">user_name (renamed)</li>
+                                <li class="renamed">user_email (renamed)</li>
+                                <li class="renamed">user_id (renamed)</li>
+                                <li>account_id</li>
+                                <li>budget_name</li>
+                                <li>primary_currency</li>
+                                <li></li>
+                                <li>api_key_label</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li class="renamed">name (renamed)</li>
+                                <li class="renamed">email (renamed)</li>
+                                <li class="renamed">id (renamed)</li>
+                                <li>account_id</li>
+                                <li>budget_name</li>
+                                <li>primary_currency</li>
+                                <li>debits_as_negative</li>
+                                <li>api_key_label</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="category-object-row"></td>
+                        <td><a href="https://lunchmoney.dev/#categories-object" target="_blank">v1 Category Object</a></td>
+                        <td><a href="../#/schemas/categoryObject" target="_blank">v2 Category Object</a></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="changelog#the-category-object">
+                                Category<br>Object<br>Changelog
+                            </a>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>id</li>
+                                <li>name</li>
+                                <li>description</li>
+                                <li>is_income</li>
+                                <li>exclude_from_budget</li>
+                                <li>exclude_from_totals</li>
+                                <li>created_at</li>
+                                <li>updated_at</li>
+                                <li>is_group</li>
+                                <li>group_id</li>
+                                <li class="deleted">group_category_name (deleted)</li>
+                                <li>children</li>
+                                <li>order</li>
+                                <li>archived</li>
+                                <li class="renamed">archived_on (renamed)</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>id</li>
+                                <li>name</li>
+                                <li>description</li>
+                                <li>is_income</li>
+                                <li>exclude_from_budget</li>
+                                <li>exclude_from_totals</li>
+                                <li>created_at</li>
+                                <li>updated_at</li>
+                                <li>is_group</li>
+                                <li>group_id</li>
+                                <li></li>
+                                <li>children</li>
+                                <li>order</li>
+                                <li>archived</li>
+                                <li class="renamed">archived_at (renamed)</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="tags-object-row"></td>
+                        <td><a href="https://lunchmoney.dev/#tags" target="_blank">v1 Tag Object</a></td>
+                        <td><a href="../#/schemas/tagObject" target="_blank">v2 Tag Object</a></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="changelog#The-Tags-Object">
+                                Tag<br>Object<br>Changelog
+                        </td>
+                        <td>
+                            <ul>
+                                <li>id</li>
+                                <li>name</li>
+                                <li>description</li>
+                                <li></li>
+                                <li></li>
+                                <li>archived</li>
+                                <li></li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>id</li>
+                                <li>name</li>
+                                <li>description</li>
+                                <li class="new">updated_at (new)</li>
+                                <li class="new">created_at (new)</li>
+                                <li>archived</li>
+                                <li class="new">archived_at (new)</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="transaction-object-row"></td>
+                        <td><a href="https://lunchmoney.dev/#transaction-object" target="_blank">v1 Transaction Object</a></td>
+                        <td><a href="../#/schemas/transactionObject" target="_blank">v2 Transaction Object</a></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="changelog#The-Transaction-Object">
+                                Transaction<br>Object<br>Changelog
+                            </a>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>id</li>
+                                <li>date</li>
+                                <li>amount</li>
+                                <li>currency</li>
+                                <li>to_base</li>
+                                <li>recurring_id</li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li>payee</li>
+                                <li>category_id</li>
+                                <li>notes</li>
+                                <li>status</li>
+                                <li>is_pending</li>
+                                <li>created_at</li>
+                                <li>updated_at</li>
+                                <li>parent_id</li>
+                                <li class="deleted">has_children (deleted)</li>
+                                <li>children</li>
+                                <li>is_group</li>
+                                <li>group_id</li>
+                                <li class="renamed">asset_id (renamed)</li>
+                                <li>plaid_account_id</li>
+                                <li class="deleted">tags (deleted)</li>
+                                <li>source</li>
+                                <li>external_id</li>
+                                <li>plaid_metadata</li>
+                                <li class="deleted">original_name (deleted)</li>
+                                <li class="deleted">display_name (deleted)</li>
+                                <li class="deleted">display_notes (deleted)</li>
+                                <li class="deleted">recurring_payee (deleted)</li>
+                                <li class="deleted">recurring_description (deleted)</li>
+                                <li class="deleted">recurring_cadence (deleted)</li>
+                                <li class="deleted">recurring_type (deleted)</li>
+                                <li class="deleted">recurring_amount (deleted)</li>
+                                <li class="deleted">recurring_currency (deleted)</li>
+                                <li class="deleted">recurring_granularity (deleted)</li>
+                                <li class="deleted">recurring_quantity (deleted)</li>
+                                <li class="deleted">category_name (deleted)</li>
+                                <li class="deleted">category_group_id (deleted)</li>
+                                <li class="deleted">category_group_name (deleted)</li>
+                                <li class="deleted">is_income (deleted)</li>
+                                <li class="deleted">exclude_from_budget (deleted)</li>
+                                <li class="deleted">exclude_from_totals (deleted)</li>
+                                <li class="deleted">asset_institution_name (deleted)</li>
+                                <li class="deleted">asset_name (deleted)</li>
+                                <li class="deleted">asset_display_name (deleted)</li>
+                                <li class="deleted">asset_status (deleted)</li>
+                                <li class="deleted">plaid_account_id (deleted)</li>
+                                <li class="deleted">plaid_account_name (deleted)</li>
+                                <li class="deleted">plaid_account_mask (deleted)</li>
+                                <li class="deleted">institution_name (deleted)</li>
+                                <li class="deleted">plaid_account_display_name (deleted)</li>
+                                <li class="deleted">account_display_name (deleted)</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>id</li>
+                                <li>date</li>
+                                <li>amount</li>
+                                <li>currency</li>
+                                <li>to_base</li>
+                                <li>recurring_id</li>
+                                <li class="new">overrides (new)
+                                    <ul>
+                                        <li>original_payee</li>
+                                        <li>original_category_id</li>
+                                        <li>original_notes</li>
+                                    </ul>
+                                </li>
+                                <li>payee</li>
+                                <li>category_id</li>
+                                <li>notes</li>
+                                <li>status</li>
+                                <li>is_pending</li>
+                                <li>created_at</li>
+                                <li>updated_at</li>
+                                <li>parent_id</li>
+                                <li class="new">is_parent (new)</li>
+                                <li>children</li>
+                                <li>is_group</li>
+                                <li>group_id</li>
+                                <li class="renamed">manual_account_id (renamed)</li>
+                                <li>plaid_account_id</li>
+                                <li class="new">tag_ids (new)</li>
+                                <li>source</li>
+                                <li>external_id</li>
+                                <li>plaid_metadata</li>
+                                <li class="new">custom_metadata (new)</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="manual-account-object-row"></td>
+                        <td><a href="https://lunchmoney.dev/#assets" target="_blank">v1 Asset Object</a></td>
+                        <td><a href="../#/schemas/manualAccountObject" target="_blank">v2 Manual Account Object</a></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                            <a href="changelog#the-manual-account-object-formerly-asset-object-">
+                                Manual<br>Account<br>Object<br>Changelog
+                            </a>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>id</li>
+                                <li>name</li>
+                                <li class="renamed">type_name (renamed)</li>
+                                <li class="renamed">subtype_name (renamed)</li>
+                                <li>display_name</li>
+                                <li>balance</li>
+                                <li>currency</li>
+                                <li>to_base</li>
+                                <li>balance_as_of</li>
+                                <li>institution_name</li>
+                                <li></li>
+                                <li class="renamed">exclude_transactions (renamed)</li>
+                                <li>closed_on</li>
+                                <li>created_at</li>
+                                <li></li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>id</li>
+                                <li>name</li>
+                                <li class="renamed">type (renamed)</li>
+                                <li class="renamed">subtype (renamed)</li>
+                                <li>display_name</li>
+                                <li>balance</li>
+                                <li>currency</li>
+                                <li>to_base</li>
+                                <li>balance_as_of</li>
+                                <li>institution_name</li>
+                                <li class="new">external_id (new) </li>
+                                <li class="renamed">exclude_from_transactions (renamed)</li>
+                                <li>closed_on</li>
+                                <li>created_at</li>
+                                <li class="new">update_at (new)</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="plaid-account-object-row"></td>
+                        <td><a href="https://lunchmoney.dev/#plaid-accounts-object" target="_blank">v1 Plaid Account Object</a></td>
+                        <td><a href="../#/schemas/plaidAccountObject" target="_blank">v2 Plaid Account Object</a></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="changelog#The-Plaid-Account-Object">
+                                Plaid<br>Account<br>Object<br>Changelog
+                        </td>
+                        <td>
+                            <ul>
+                                <li>id</li>
+                                <li>date_linked</li>
+                                <li>name</li>
+                                <li>display_name</li>
+                                <li>type</li>
+                                <li>subtype</li>
+                                <li>mask</li>
+                                <li>institution_name</li>
+                                <li>status</li>
+                                <li></li>
+                                <li>limit</li>
+                                <li>balance</li>
+                                <li>currency</li>
+                                <li>to_base</li>
+                                <li>balance_last_update</li>
+                                <li>import_start_date</li>
+                                <li>last_import</li>
+                                <li>last_fetch</li>
+                                <li>plaid_last_successful_update</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>id</li>
+                                <li>date_linked</li>
+                                <li>name</li>
+                                <li>display_name</li>
+                                <li >type</li>
+                                <li>subtype</li>
+                                <li>mask</li>
+                                <li>institution_name</li>
+                                <li>status</li>
+                                <li class="new">allow_transaction_modifications (new) </li>
+                                <li>limit</li>
+                                <li>balance</li>
+                                <li>currency</li>
+                                <li>to_base</li>
+                                <li>balance_last_update</li>
+                                <li>import_start_date</li>
+                                <li>last_import</li>
+                                <li>last_fetch</li>
+                                <li>plaid_last_successful_update</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="recurring-object-row"></td>
+                        <td><a href="https://lunchmoney.dev/#recurring-items-object" target="_blank">v1 Recurring Item Object</a></td>
+                        <td><a href="../#/schemas/recurringObject" target="_blank">v2 Recurring Object</a></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="changelog#the-recurring-object">
+                                Recurring<br>Object<br>Changelog
+                            </a>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>id</li>
+                                <li>description</li>
+                                <li></li>
+                                <li></li>
+                                <li class="moved">start_date (moved)</li>
+                                <li class="moved">end_date (moved)</li>
+                                <li class="moved">granularity (moved)</li>
+                                <li class="moved">quantity (moved)</li>
+                                <li class="renamed">billing_date (renamed)</li>
+                                <li class="renamed">original_name (renamed)</li>
+                                <li class="moved">amount (moved)</li>
+                                <li class="moved">currency (moved)</li>
+                                <li class="moved">to_base (moved)</li>
+                                <li class="moved">plaid_account_id (moved)</li>
+                                <li class="renamed">asset_id (renamed)</li>
+                                <li></li>
+                                <li class="moved">payee (moved)</li>
+                                <li class="moved">notes (moved)</li>
+                                <li class="moved">category_id (moved)</li>
+                                <li class="deleted">category_group_id (deleted)</li>
+                                <li class="deleted">is_income (deleted)</li>
+                                <li class="deleted">exclude_from_totals (deleted)</li>
+                                <li class="renamed">date</li>
+                                <li></li>
+                                <li class="renamed">occurrences</li>
+                                <li class="renamed">transactions_within_range</li>
+                                <li class="renamed">missing_dates_within_range</li>
+                                <li>created_by</li>
+                                <li>created_at</li>
+                                <li>updated_at</li>
+                                <li>source</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>id</li>
+                                <li>description</li>
+                                <li class="new">status (new)</li>
+                                <li class="new">transaction_criteria (new)
+                                    <ul>
+                                        <li class="moved">start_date (moved)</li>
+                                        <li class="moved">end_date (moved)</li>
+                                        <li class="moved">granularity (moved)</li>
+                                        <li class="moved">quantity (moved)</li>
+                                        <li class="renamed">anchor_date (renamed)</li>
+                                        <li class="renamed">payee (renamed)</li>
+                                        <li class="moved">amount (moved)</li>
+                                        <li class="moved">currency (moved)</li>
+                                        <li class="moved">to_base (moved)</li>
+                                        <li class="moved">plaid_account_id (moved)</li>
+                                        <li class="renamed">manual_account_id (renamed)</li>
+                                    </ul>
+                                </li>
+                                <li class="new">overrides (new)
+                                    <ul>
+                                        <li class="moved">payee (moved)</li>
+                                        <li class="moved">notes (moved)</li>
+                                        <li class="moved">category_id (moved)</li>
+                                            </ul>
+                                </li>
+                                <li></li>
+                                <li></li>
+                                <li class="new">matches (new)
+                                    <ul>
+                                        <li class="new">request_start_date (new)</li>
+                                        <li class="new">request_end_date (new)</li>
+                                        <li class="renamed">expected_occurrence_dates</li>
+                                        <li class="renamed">found_transactions</li>
+                                        <li class="renamed">missing_transaction_dates</li>
+                                    </ul>
+                                </li>
+                                <li>created_by</li>
+                                <li>created_at</li>
+                                <li>updated_at</li>
+                                <li>source</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('table').DataTable();
+            });
+        </script>
+    </body>
+    </html>
+

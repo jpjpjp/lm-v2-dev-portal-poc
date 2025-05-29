@@ -1,27 +1,55 @@
 {
   "$schema": "https://cdn.scalar.com/schema/scalar-config.json",
   "subdomain": "lm-v2-api-evaluation-service",
+  "publishOnMerge": true,
+  "siteMeta": {
+    "title": "Lunch Money Developer Portal",
+    "description": "Tools and resources for developers using the Lunch Money API.",
+    "favicon": "https://lunchmoney.dev/images/logo-9c134457.png"
+  },
   "references": [
     {
-      "name": "Lunch Money API v2",
+      "name": "Lunch Money API v2 Reference",
       "path": "api/v2/lunch-money-api-v2.yaml"
     }
-  ],
+  ],  
   "guides": [
     {
-      "name": "General Guides",
-      "folder": "guides",
-      "exclude": [
-        "_assets.md",
-        "_budget.md",
-        "_categories.md",
-        "_crypto.md",
-        "_plaid_accounts.md",
-        "_recurring_expenses.md",
-        "_recurring_items.md",
-        "_tags.md",
-        "_transactions.md",
-        "_user.md"
+      "name": "Getting Started",
+      "sidebar": [
+        {
+          "path": "guides/_getting_started.md",
+          "type": "page"
+        },
+        {
+          "path": "guides/_faq.md",
+          "type": "page"
+        },
+        {
+          "path": "guides/_faq.md",
+          "type": "page"
+        },
+        {
+          "path": "guides/_awesome_projects.md",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "name": "Lunch Money API v2",
+      "sidebar": [
+        {
+          "path": "api/v2/v2-version-history.md",
+          "type": "page"
+        },
+        {
+          "path": "api/v2/v2-api-changelog.md",
+          "type": "page"
+        },
+        {
+          "path": "api/v2/changelog-visual.html",
+          "type": "page"
+        }
       ]
     },
     {
