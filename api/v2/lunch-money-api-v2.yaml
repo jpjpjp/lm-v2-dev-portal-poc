@@ -78,6 +78,12 @@ tags:
     externalDocs:
       description: Learn more about transactions
       url: https://support.lunchmoney.app/finances/transactions
+  - name: transactions (files)
+    description: Manage files that are attached to transactions
+    externalDocs:
+      description: Learn more about transactions
+      url: https://support.lunchmoney.app/finances/transactions
+
 components:
   schemas:
     userObject:
@@ -2936,16 +2942,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/errorResponseObject"
               example:
-                message: Request Validation Failure
+                message: Invalid Request Parameters
                 errors:
-                  - errMsg: must be equal to one of the allowed values
-                    instancePath: /query/format
-                    schemaPath: "#/properties/query/properties/format/enum"
-                    keyword: enum
-                    params:
-                      allowedValues:
-                        - flattened
-                        - nested
+                  - errMsg: "Invalid enum value for parameter: 'format'. Expected 'nested'|'flattened', received 'foobar'."
         "401":
           $ref: "#/components/responses/unauthorizedToken"
         "429":
@@ -3136,20 +3135,15 @@ paths:
                         archived_at: null
                         order: 2
         "400":
-          description: Bad Request
+          description: Invalid Path Parameters
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponseObject"
               example:
-                message: Request Validation Failure
+                message: Invalid Path Parameters
                 errors:
-                  - errMsg: must be a valid integer
-                    instancePath: /query/ids/0
-                    schemaPath: "#/properties/query/properties/ids/items/type"
-                    keyword: type
-                    params:
-                      type: integer
+                  - errMsg: "Invalid value type for path parameter: 'id'. Expected 'number', received 'string'."
         "401":
           $ref: "#/components/responses/unauthorizedToken"
         "404":
@@ -3316,10 +3310,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/errorResponseObject"
               example:
-                message: Invalid Request Body
+                message: Request Validation Failure
                 errors:
-                  - errMsg: Cannot modify the 'group_id' property of an existing category or
-                      category group
+                  - errMsg: Category cannot be converted to a group or vice versa.
         "401":
           $ref: "#/components/responses/unauthorizedToken"
         "404":
@@ -3383,9 +3376,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/errorResponseObject"
               example:
-                message: Not Found
+                message: "Not Found"
                 errors:
-                  - errMsg: There is no category with the id:'543210'`
+                  - errMsg: "There is no category with the id: 543210."
+                    id: 543210
         "422":
           description: Unprocessable Entity
           content:

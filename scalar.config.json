@@ -7,54 +7,165 @@
     "description": "Tools and resources for developers using the Lunch Money API.",
     "favicon": "https://lunchmoney.dev/images/logo-9c134457.png"
   },
+  "guides": [
+    {
+      "name": "Lunch Money Developer Docs",
+      "type": "folder",
+      "defaultOpen": false,
+      "sidebar": [
+        {
+          "name": "Introduction",
+          "description": "Introduction to Lunch Money API",
+          "path": "guides/introduction.md",
+          "type": "page"
+        },
+        {
+          "name": "Guides",
+          "description": "Guides for using the Lunch Money API",
+          "defaultOpen": false,
+          "type": "folder",
+          "children": [
+            {
+              "name": "Getting Started",
+              "description": "First steps to using the Lunch Money API",
+              "path": "guides/_getting_started.md",
+              "type": "page"
+            },
+            {
+              "name": "Pagination",
+              "description": "Dealing with paginated responses",
+              "path": "guides/pagination.md",
+              "type": "page"
+            },
+            {
+              "name": "Rate Limiting",
+              "description": "Dealing with rate limiting",
+              "path": "guides/rate_limiting.md",
+              "type": "page"
+            },
+            {
+              "name": "_faq",
+              "description": "Frequently Asked Questions",
+              "path": "guides/_faq.md",
+              "type": "page"
+            }
+          ]
+        },
+        {
+          "name": "Legacy APIs",
+          "description": "Legacy Lunch Money API Docs",
+          "defaultOpen": false,
+          "type": "folder",
+          "children": [
+            {
+              "name": "Migrating from API v1 to v2",
+              "description": "Legacy Lunch Money API Docs",
+              "path": "api/v1/migrating_from_v1_to_v2.md",
+              "type": "page"
+            },
+            {
+              "name": "API v1 Reference",
+              "description": "Reference for the Lunch Money API v1",
+              "defaultOpen": false,
+              "type": "folder",
+              "children": [
+                {
+                  "name": "Assets",
+                  "description": "/assets",
+                  "path": "api/v1/assets.md",
+                  "type": "page"
+                },
+                {
+                  "name": "Budget",
+                  "description": "/budget",
+                  "path": "api/v1/budget.md",
+                  "type": "page"
+                },
+                {
+                  "name": "Categories",
+                  "description": "/categories",
+                  "path": "api/v1/categories.md",
+                  "type": "page"
+                },
+                {
+                  "name": "Crypto",
+                  "description": "/crypto",
+                  "path": "api/v1/crypto.md",
+                  "type": "page"
+                },
+                {
+                  "name": "Me",
+                  "description": "/me",
+                  "path": "api/v1/user.md",
+                  "type": "page"
+                },
+                {
+                  "name": "Plaid Accounts",
+                  "description": "/plaid_accounts",
+                  "path": "api/v1/plaid_accounts.md",
+                  "type": "page"
+                },
+                {
+                  "name": "Recurring Items",
+                  "description": "/recurring_items",
+                  "path": "api/v1/recurring_items.md",
+                  "type": "page"
+                },
+                {
+                  "name": "Tags",
+                  "description": "/tags",
+                  "path": "api/v1/tags.md",
+                  "type": "page"
+                },
+                {
+                  "name": "Transactions",
+                  "description": "/transactions",
+                  "path": "api/v1/transactions.md",
+                  "type": "page"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Reference",
+          "description": "Additional reference material",
+          "defaultOpen": false,
+          "type": "folder",
+          "children": [
+            {
+              "name": "API v2 Changelog",
+              "description": "Changelog for the Lunch Money API v2",
+              "path": "api/v2/v2-version-history.md",
+              "type": "page"
+            },
+            {
+              "name": "API v1 Changelog",
+              "description": "Version history for the Lunch Money API v2",
+              "path": "api/v1/changelog.md",
+              "type": "page"
+            },
+            {
+              "name": "Supported Currencies",
+              "description": "Supported currencies for the Lunch Money API",
+              "path": "guides/currencies.md",
+              "type": "page"
+            }
+          ]
+        }
+      ]
+    }
+  ],
   "references": [
     {
       "name": "Lunch Money API v2 Reference",
       "path": "api/v2/lunch-money-api-v2.yaml"
     }
-  ],  
-  "guides": [
-    {
-      "name": "Getting Started",
-      "sidebar": [
-        {
-          "path": "guides/_getting_started.md",
-          "type": "page"
-        },
-        {
-          "path": "guides/_faq.md",
-          "type": "page"
-        },
-        {
-          "path": "guides/_faq.md",
-          "type": "page"
-        },
-        {
-          "path": "guides/_awesome_projects.md",
-          "type": "page"
-        }
-      ]
+  ],
+  "siteConfig": {
+    "logo": {
+      "darkMode": "https://lunchmoney.dev/images/logo-9c134457.png",
+      "lightMode": "https://lunchmoney.dev/images/logo-9c134457.png"
     },
-    {
-      "name": "Lunch Money API v2",
-      "sidebar": [
-        {
-          "path": "api/v2/v2-version-history.md",
-          "type": "page"
-        },
-        {
-          "path": "api/v2/v2-api-changelog.md",
-          "type": "page"
-        },
-        {
-          "path": "api/v2/changelog-visual.html",
-          "type": "page"
-        }
-      ]
-    },
-    {
-      "name": "Legacy: Lunch Money API v1",
-      "folder": "api/v1"
-    }
-  ]
-}
+    "footer": "This is a test footer"
+  }}
