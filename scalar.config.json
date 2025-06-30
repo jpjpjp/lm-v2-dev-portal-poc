@@ -15,7 +15,7 @@
       "sidebar": [
         {
           "name": "Introduction",
-          "description": "Introduction to Lunch Money API",
+          "description": "Welcome to the Lunch Money Developer Developer Portal.",
           "path": "guides/introduction.md",
           "type": "page"
         },
