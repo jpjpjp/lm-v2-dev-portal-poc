@@ -592,13 +592,7 @@ components:
           format: int64
           nullable: true
           description: The unique identifier of the associated recurring item that this
-            transaction matched. See the overrides object to determine which transaction
-            properties were changed by the recurring rule. 
-        overrides:
-          oneOf:
-            - $ref: "#/components/schemas/transactionOverridesObject"
-            - type: "null"
-              description: If the transaction has no overrides, it is set to null
+            transaction matched. 
         payee:
           type: string
           description: |
@@ -817,7 +811,6 @@ components:
         - currency
         - to_base
         - recurring_id
-        - overrides
         - payee
         - category_id
         - notes
@@ -874,17 +867,7 @@ components:
           format: int64
           nullable: true
           description: The unique identifier of the associated recurring item that this
-            transaction matched. If the recurring item changed properties of
-            this transaction, an `overrides` property with details on what was
-            overridden will be include in the transaction object. If no
-            `overrides` property exists when there is a `recurring_id` it means
-            that the recurring_item is still in the suggested state, or that it
-            does not contain any rules to override transaction properties.
-        overrides:
-          oneOf:
-            - $ref: "#/components/schemas/transactionOverridesObject"
-            - type: "null"
-              description: If the transaction has no overrides, it is set to null
+            transaction matched. 
         payee:
           type: string
           description: |
@@ -1089,7 +1072,6 @@ components:
         - currency
         - to_base
         - recurring_id
-        - overrides
         - payee
         - category_id
         - notes
@@ -1259,25 +1241,12 @@ components:
             property disabled.
           allOf:
             - $ref: "#/components/schemas/currencyEnum"
-        to_base:
-          type: number
-          format: double
-          description: System defined amount of this transaction in the user's primary
-            currency. Ignored if set.
         recurring_id:
           type: integer
           format: int64
           nullable: true
           description: The unique identifier of the associated recurring item that this
             transaction matches.
-        overrides:
-          description: The system defined properties of a transaction that were overridden
-            due to a recurring rule. Ignored if set.
-          oneOf:
-            - $ref: "#/components/schemas/transactionOverridesObject"
-            - type: string
-              nullable: true
-              description: If the transaction has no overrides, it is set to null
         payee:
           type: string
           description: |
@@ -1298,66 +1267,6 @@ components:
             the existing notes.
           minLength: 0
           maxLength: 350
-        status:
-          type: string
-          description: >
-            Status of the transaction, may be one of:
-
-            - `reviewed`: User has reviewed the transaction, or it was
-            automatically marked as reviewed due to reviewed recurring_item
-            logic
-
-            - `unreviewed`: User has not reviewed the transaction and it does
-            not match any reviewed recurring_items.
-          enum:
-            - reviewed
-            - unreviewed
-        is_pending:
-          type: boolean
-          description: System defined flag set for pending transactions. Ignored if set.
-        created_at:
-          type: string
-          format: date-time
-          description: System defined date and time of when the transaction was created.
-            Ignored if set.
-        updated_at:
-          type: string
-          format: date-time
-          description: System defined date and time of when the transaction was last
-            updated. Ignored if set.
-        is_parent:
-          type: boolean
-          description: System defined boolean indicating if this transaction was split.
-            Ignored if set. To split or unsplit a transaction use the
-            `/transactions/split` endpoint.
-        children:
-          type: array
-          nullable: false
-          items:
-            $ref: "#/components/schemas/childTransactionObject"
-          description: An array of child transactions that exists when a transaction has
-            been split or if the transaction is a group. Ignored if set. Split
-            and Grouped transactions may not be modified this API.
-        parent_id:
-          type: integer
-          format: int64
-          nullable: true
-          description: A transaction ID if this is a split transaction. Ignored if set.
-            Split transactions may not be modified this API. Use the
-            `transactions/split` endpoint instead.
-        is_group:
-          type: boolean
-          description: System defined boolean indicating if this transaction represents a
-            group of transactions. Ignored if set. Grouped transactions may not
-            be modified with this API. Use the `transactions/group` endpoint
-            instead.
-        group_id:
-          type: integer
-          format: int64
-          nullable: true
-          description: A transaction group ID if this transaction is part of a group.
-            Ignored if set. Grouped transactions may not be modified with this
-            API. Use the `transactions/group` endpoint instead.
         manual_account_id:
           type: integer
           format: int64
@@ -1398,6 +1307,84 @@ components:
           items:
             type: integer
             format: int64
+        external_id:
+          type: string
+          nullable: true
+          description: A user-defined external ID for the transaction. The update will
+            fail if the transaction does not also have a `manual_account_id` or
+            if there is already an existing transaction with the same
+            `manual_account_id`/`external_id` combination.
+          minLength: 0
+          maxLength: 75
+        custom_metadata:
+          type: object
+          nullable: true
+          description: User defined JSON data that can be set or cleared via the API.
+        status:
+          type: string
+          description: >
+            Status of the transaction, may be one of:
+
+            - `reviewed`: User has reviewed the transaction, or it was
+            automatically marked as reviewed due to reviewed recurring_item
+            logic
+
+            - `unreviewed`: User has not reviewed the transaction and it does
+            not match any reviewed recurring_items.
+          enum:
+            - reviewed
+            - unreviewed
+        to_base:
+          type: number
+          format: double
+          description: System defined amount of this transaction in the user's primary
+            currency. Ignored if set.
+        is_pending:
+          type: boolean
+          description: System defined flag set for pending transactions. Ignored if set.
+        plaid_metadata:
+          type: object
+          nullable: true
+          description: System set metadata from a Plaid account sync. Ignored if set.
+        created_at:
+          type: string
+          format: date-time
+          description: System defined date and time of when the transaction was created.
+            Ignored if set.
+        updated_at:
+          type: string
+          format: date-time
+          description: System defined date and time of when the transaction was last
+            updated. Ignored if set.
+        is_parent:
+          type: boolean
+          description: System defined boolean indicating if this transaction was split.
+            To split or unsplit a transaction use the
+            `/transactions/split` endpoint. Ignored if set. 
+        children:
+          type: array
+          nullable: false
+          items:
+            $ref: "#/components/schemas/childTransactionObject"
+          description: An array of child transactions that exists when a transaction has
+            been split or if the transaction is a group. Split
+            and Grouped transactions may not be modified this API. Ignored if set. 
+        parent_id:
+          type: integer
+          format: int64
+          nullable: true
+          description: A transaction ID if this is a split transaction. Split
+            transactions may not be modified this API. Use the
+            `transactions/split` endpoint instead. Ignored if set. 
+        is_group:
+          type: boolean
+          description: System defined boolean indicating if this transaction represents a
+            group of transactions. Grouped transactions may not be modified with this API. Use the `transactions/group` endpoint instead. Ignored if set. 
+        group_id:
+          type: integer
+          format: int64
+          nullable: true
+          description: A transaction group ID if this transaction is part of a group. Grouped transactions may not be modified with this API. Use the `transactions/group` endpoint instead. Ignored if set. 
         source:
           type: string
           nullable: true
@@ -1413,115 +1400,6 @@ components:
             - rule
             - split
             - user
-        external_id:
-          type: string
-          nullable: true
-          description: A user-defined external ID for the transaction. The update will
-            fail if the transaction does not also have a `manual_account_id` or
-            if there is already an existing transaction with the same
-            `manual_account_id`/`external_id` combination.
-          minLength: 0
-          maxLength: 75
-        plaid_metadata:
-          type: object
-          nullable: true
-          description: System set metadata from a Plaid account sync. Ignored if set.
-        custom_metadata:
-          type: object
-          nullable: true
-          description: User defined JSON data that can be set or cleared via the API.
-
-    # The object that may be submitted to PUT /transactions/ bulk update
-    bulkUpdateTransactionsObject:
-      type: object
-      x-internal: true
-      additionalProperties: false
-      properties:
-        date:
-          type: string
-          format: date
-          description: New date for all transactions in ISO 8601 format
-        payee:
-          type: string
-          description: |
-            New payee for all transactions.
-          minLength: 0
-          maxLength: 140
-        category_id:
-          type: integer
-          format: int64
-          nullable: true
-          description: Unique identifier of the new category to assign to all
-            transactions. Set this to 0 to un-categorize all transactions.
-        notes:
-          type: string
-          nullable: true
-          description: >
-            A new notes for all transactions. Set this to an empty string to
-            remove all existing notes.
-          minLength: 0
-          maxLength: 350
-        currency:
-          description: Three-letter lowercase currency code in ISO 4217 format for all
-            transactions.<br> This cannot be set if any of the transactions
-            belong to a synced account whose "Allow Modifications to
-            Transactions" property is not set.
-          allOf:
-            - $ref: "#/components/schemas/currencyEnum"
-        manual_account_id:
-          type: integer
-          format: int64
-          nullable: true
-          description: The unique identifier of the manual account to associate all
-            transactions with. Should not be set if `plaid_account_id` is also
-            be set, unless both properties are set to 0 in which case the
-            transactions will have no account and be displayed as "Cash
-            Transactions".<br> This cannot be set if any of the transactions
-            belong to a synced account whose "Allow Modifications to
-            Transactions" property is not set.
-        plaid_account_id:
-          type: integer
-          format: int64
-          nullable: true
-          description: The unique identifier of the plaid synced account to associate all
-            transactions with. Should not be set if `manual_account_id` is also
-            be set, unless both properties are set to 0 in which case the
-            transactions will have no account and be displayed as "Cash
-            Transactions". <br> This cannot be set if any of the transactions
-            belong to a synced account whose "Allow Modifications to
-            Transactions" property is not set. Similarly existing transactions
-            cannot be moved to to an existing Plaid account without this
-            property.
-        tag_ids:
-          type: array
-          nullable: false
-          description: A list of tag_ids for tags to associated with all transactions. If
-            set, this property will overwrite any existing tags. Use
-            `additional_tag_ids` to add tags to the existing transactions' tags.
-            Set this to an empty array to remove all tags from a transaction. If
-            set `additional_tag_ids` may not be set.
-          items:
-            type: integer
-            format: int64
-        additional_tag_ids:
-          type: array
-          nullable: false
-          description: A list of tag_ids for the tags associated with this transaction. If
-            set, the tags listed in this property be added to any existing
-            transaction tags. Use `tag_ids` to overwrite or clear transaction
-            tags. If set `tag_ids` may not be set.
-          items:
-            type: integer
-            format: int64
-        status:
-          type: string
-          description: |
-            Updated status for all of the transactions, may be one of:
-            - `reviewed`: User has reviewed the transaction
-            - `unreviewed`: User has not reviewed the transaction
-          enum:
-            - reviewed
-            - unreviewed
 
     # The object that may be submitted to PUT /transactions/split
     splitTransactionObject:
@@ -2374,30 +2252,6 @@ components:
         - updated_at
         - source
 
-    # The object containing information about the transaction properties
-    # that were overridden by a recurring item
-    transactionOverridesObject:
-      type: object
-      description: |
-        An object that contains the original values of any properties that were 
-        changed by the recurring item. 
-        This will be null if the transaction did not match a recurring item,
-        or if the matched recurring item was suggested but has not been reviewed.
-      # x-internal: true
-      additionalProperties: false
-      # nullable: true
-      properties:
-        original_payee:
-          type: string
-          description: The value of the payee field prior to the recurring rule taking
-            effect. Will not exist if the payee field was not previously
-            populated or was not changed by the recurring item.
-        original_notes:
-          type: string
-          description: The value of the notes field prior to the recurring rule taking
-            effect. Will not exist if the notes field was not previously
-            populated or was not changed by the recurring recurring_item.
-
     # The schema for an object returned when an error occurs
     errorResponseObject:
       type: object
@@ -2907,8 +2761,8 @@ paths:
                         is_income: false
                         exclude_from_budget: false
                         exclude_from_totals: false
-                        updated_at: "2024-02-28T09:49:03.238Z"
-                        created_at: "2024-01-28T09:49:03.238Z"
+                        updated_at: "2025-02-28T09:49:03.238Z"
+                        created_at: "2025-01-28T09:49:03.238Z"
                         is_group: true
                         order: 2
                         archived: false
@@ -2921,8 +2775,8 @@ paths:
                             is_income: false
                             exclude_from_budget: false
                             exclude_from_totals: false
-                            updated_at: "2024-02-28T09:49:03.238Z"
-                            created_at: "2024-01-28T09:49:03.238Z"
+                            updated_at: "2025-02-28T09:49:03.238Z"
+                            created_at: "2025-01-28T09:49:03.238Z"
                             is_group: false
                             order: 1
                             archived: false
@@ -2934,8 +2788,8 @@ paths:
                             is_income: false
                             exclude_from_budget: false
                             exclude_from_totals: false
-                            updated_at: "2024-02-28T09:49:03.238Z"
-                            created_at: "2024-01-28T09:49:03.238Z"
+                            updated_at: "2025-02-28T09:49:03.238Z"
+                            created_at: "2025-01-28T09:49:03.238Z"
                             is_group: false
                             order: 2
                             archived: false
@@ -2947,8 +2801,8 @@ paths:
                         is_income: false
                         exclude_from_budget: false
                         exclude_from_totals: false
-                        updated_at: "2024-02-28T09:49:03.225Z"
-                        created_at: "2024-01-28T09:49:03.225Z"
+                        updated_at: "2025-02-28T09:49:03.225Z"
+                        created_at: "2025-01-28T09:49:03.225Z"
                         is_group: false
                         order: 0
                         archived: false
@@ -2960,8 +2814,8 @@ paths:
                         is_income: true
                         exclude_from_budget: false
                         exclude_from_totals: true
-                        updated_at: "2024-02-28T09:49:03.238Z"
-                        created_at: "2024-01-28T09:49:03.238Z"
+                        updated_at: "2025-02-28T09:49:03.238Z"
+                        created_at: "2025-01-28T09:49:03.238Z"
                         is_group: false
                         order: 3
                         archived: false
@@ -2976,8 +2830,8 @@ paths:
                         is_income: false
                         exclude_from_budget: false
                         exclude_from_totals: false
-                        updated_at: "2024-02-28T09:49:03.238Z"
-                        created_at: "2024-01-28T09:49:03.238Z"
+                        updated_at: "2025-02-28T09:49:03.238Z"
+                        created_at: "2025-01-28T09:49:03.238Z"
                         is_group: true
                         order: 1
                         archived: false
@@ -2990,8 +2844,8 @@ paths:
                             is_income: false
                             exclude_from_budget: false
                             exclude_from_totals: false
-                            updated_at: "2024-02-28T09:49:03.238Z"
-                            created_at: "2024-01-28T09:49:03.238Z"
+                            updated_at: "2025-02-28T09:49:03.238Z"
+                            created_at: "2025-01-28T09:49:03.238Z"
                             is_group: false
                             order: 1
                             archived: false
@@ -3003,8 +2857,8 @@ paths:
                             is_income: false
                             exclude_from_budget: false
                             exclude_from_totals: false
-                            updated_at: "2024-02-28T09:49:03.238Z"
-                            created_at: "2024-01-28T09:49:03.238Z"
+                            updated_at: "2025-02-28T09:49:03.238Z"
+                            created_at: "2025-01-28T09:49:03.238Z"
                             is_group: false
                             order: 2
                             archived: false
@@ -3016,8 +2870,8 @@ paths:
                         is_income: false
                         exclude_from_budget: false
                         exclude_from_totals: false
-                        updated_at: "2024-02-28T09:49:03.238Z"
-                        created_at: "2024-01-28T09:49:03.238Z"
+                        updated_at: "2025-02-28T09:49:03.238Z"
+                        created_at: "2025-01-28T09:49:03.238Z"
                         is_group: false
                         order: 1
                         archived: false
@@ -3029,8 +2883,8 @@ paths:
                         is_income: false
                         exclude_from_budget: false
                         exclude_from_totals: false
-                        updated_at: "2024-02-28T09:49:03.238Z"
-                        created_at: "2024-01-28T09:49:03.238Z"
+                        updated_at: "2025-02-28T09:49:03.238Z"
+                        created_at: "2025-01-28T09:49:03.238Z"
                         is_group: false
                         order: 2
                         archived: false
@@ -3042,8 +2896,8 @@ paths:
                         is_income: false
                         exclude_from_budget: false
                         exclude_from_totals: false
-                        updated_at: "2024-02-28T09:49:03.225Z"
-                        created_at: "2024-01-28T09:49:03.225Z"
+                        updated_at: "2025-02-28T09:49:03.225Z"
+                        created_at: "2025-01-28T09:49:03.225Z"
                         is_group: false
                         order: 2
                         archived: false
@@ -3055,8 +2909,8 @@ paths:
                         is_income: true
                         exclude_from_budget: false
                         exclude_from_totals: true
-                        updated_at: "2024-02-28T09:49:03.238Z"
-                        created_at: "2024-01-28T09:49:03.238Z"
+                        updated_at: "2025-02-28T09:49:03.238Z"
+                        created_at: "2025-01-28T09:49:03.238Z"
                         is_group: false
                         order: 3
                         archived: false
@@ -3136,8 +2990,8 @@ paths:
                     is_income: false
                     exclude_from_budget: true
                     exclude_from_totals: false
-                    updated_at: "2024-05-26T19:56:52.699Z"
-                    created_at: 2024-05-26T19:56:52.699Z
+                    updated_at: "2025-05-26T19:56:52.699Z"
+                    created_at: "2025-05-26T19:56:52.699Z"
                     is_group: false
                     group_id: null
                     archived: false
@@ -3151,8 +3005,8 @@ paths:
                     is_income: false
                     exclude_from_budget: false
                     exclude_from_totals: false
-                    updated_at: "2024-05-27T19:59:45.053Z"
-                    created_at: "2024-05-27T19:59:45.053Z"
+                    updated_at: "2025-05-27T19:59:45.053Z"
+                    created_at: "2025-05-27T19:59:45.053Z"
                     is_group: true
                     group_id: null
                     archived: false
@@ -3165,8 +3019,8 @@ paths:
                         is_income: false
                         exclude_from_budget: false
                         exclude_from_totals: false
-                        updated_at: "2024-02-28T09:49:03.225Z"
-                        created_at: "2024-01-28T09:49:03.225Z"
+                        updated_at: "2025-02-28T09:49:03.225Z"
+                        created_at: "2025-01-28T09:49:03.225Z"
                         is_group: false
                         order: 1
                         archived: false
@@ -3228,8 +3082,8 @@ paths:
                     is_income: false
                     exclude_from_budget: false
                     exclude_from_totals: false
-                    updated_at: "2024-02-28T09:49:03.238Z"
-                    created_at: "2024-01-28T09:49:03.238Z"
+                    updated_at: "2025-02-28T09:49:03.238Z"
+                    created_at: "2025-01-28T09:49:03.238Z"
                     group_id: 86
                     is_group: false
                     archived: false
@@ -3243,8 +3097,8 @@ paths:
                     is_income: false
                     exclude_from_budget: false
                     exclude_from_totals: false
-                    updated_at: "2024-02-28T09:49:03.238Z"
-                    created_at: "2024-01-28T09:49:03.238Z"
+                    updated_at: "2025-02-28T09:49:03.238Z"
+                    created_at: "2025-01-28T09:49:03.238Z"
                     is_group: true
                     order: 2
                     archived: false
@@ -3257,8 +3111,8 @@ paths:
                         is_income: false
                         exclude_from_budget: false
                         exclude_from_totals: false
-                        updated_at: "2024-02-28T09:49:03.238Z"
-                        created_at: "2024-01-28T09:49:03.238Z"
+                        updated_at: "2025-02-28T09:49:03.238Z"
+                        created_at: "2025-01-28T09:49:03.238Z"
                         group_id: 86
                         is_group: false
                         archived: false
@@ -3270,8 +3124,8 @@ paths:
                         is_income: false
                         exclude_from_budget: false
                         exclude_from_totals: false
-                        updated_at: "2024-02-28T09:49:03.238Z"
-                        created_at: "2024-01-28T09:49:03.238Z"
+                        updated_at: "2025-02-28T09:49:03.238Z"
+                        created_at: "2025-01-28T09:49:03.238Z"
                         group_id: 86
                         is_group: false
                         archived: false
@@ -3313,36 +3167,19 @@ paths:
         - categories
       summary: Update an existing category or category group
       description: >-
-        Updates an existing category or category group.
-
-
-        You may submit the response from a `GET /categories/{id}` as the request
-        body which includes system created properties such as `id` or
-        `created_at`, however only the `name`, `description`, `is_income`,
-        `exclude_from_budget`, `exclude_from_totals`, `archived`, `group_id`,
-        and `children` can be updated using this API.
-
+        Modifies the properties of an existing category or category group.<br><br>
+        
+        You may submit the response from a `GET /categories/{id}` as the request body, however only certain
+        properties can be updated using this API. The following system set properties are
+        accepted in the request body but their values will be ignored: `id`, `archived_at`, `updated_at`, `created_at`, and `order`.<br><br>
 
         It is also possible to provide only the properties to be updated in the
         request body, as long as the request includes at least one of the
-        properties listed above. For example a request body that contains only a
-        `name` property is valid.
+        properties that is not listed above. For example a request body that contains only a `name` property is valid.<br><br>
 
-        It is not possible to use this API to convert a category to a category
-        group, or a vice versa, so while submitting a request body with the
-        `is_group` property is tolerated, it will result in an error response if
-        the value is changed.
+        It is not possible to use this API to convert a category to a category group, or a vice versa, so while submitting a request body with the `is_group` property is tolerated, it will result in an error response if the value is changed.<br><br>
 
-
-        It is possible to modify the children of an existing category group with
-        this API by setting the `children` attribute. If this is set it will
-        replace the existing children with the newly specified children, so if
-        the intention is to add or remove a single category, it is more
-        straightforward to update the child category by specifying the new
-        `group_id` attribute. If the goal is to add multiple new children or
-        remove multiple existing children, it is recommended to first call the
-        `GET /categories/:id` endpoint to get the existing children and then
-        modify the list as desired.
+        It is possible to modify the children of an existing category group with this API by setting the `children` attribute. If this is set it will replace the existing children with the newly specified children, so if the intention is to add or remove a single category, it is more straightforward to update the child category by specifying the new `group_id` attribute. If the goal is to add multiple new children or remove multiple existing children, it is recommended to first call the `GET /categories/:id` endpoint to get the existing children and then modify the list as desired.<br><br>
       operationId: updateCategory
       parameters:
         - name: id
@@ -3418,8 +3255,8 @@ paths:
                     is_income: false
                     exclude_from_budget: false
                     exclude_from_totals: true
-                    updated_at: "2024-05-26T20:41:18.406Z"
-                    created_at: "2024-01-28T09:49:03.225Z"
+                    updated_at: "2025-05-26T20:41:18.406Z"
+                    created_at: "2025-01-28T09:49:03.225Z"
                     is_group: false
                     order: 0
                     archived: false
@@ -3433,8 +3270,8 @@ paths:
                     is_income: false
                     exclude_from_budget: false
                     exclude_from_totals: false
-                    updated_at: "2024-06-22T19:54:30.921Z"
-                    created_at: "2024-01-28T09:49:03.238Z"
+                    updated_at: "2025-06-22T19:54:30.921Z"
+                    created_at: "2025-01-28T09:49:03.238Z"
                     is_group: true
                     order: 2
                     archived: false
@@ -3447,8 +3284,8 @@ paths:
                         is_income: false
                         exclude_from_budget: false
                         exclude_from_totals: false
-                        updated_at: "2024-02-28T09:49:03.238Z"
-                        created_at: "2024-01-28T09:49:03.238Z"
+                        updated_at: "2025-02-28T09:49:03.238Z"
+                        created_at: "2025-01-28T09:49:03.238Z"
                         group_id: 86
                         is_group: false
                         archived: false
@@ -3592,15 +3429,15 @@ paths:
                     subtype: brokerage
                     display_name: null
                     balance: "41211.8000"
-                    balance_as_of: "2024-06-25T17:00:04.000Z"
+                    balance_as_of: "2025-06-25T17:00:04.000Z"
                     closed_on: null
                     currency: usd
                     to_base: 41211.8
                     institution_name: Fidelity
                     external_id: null
                     exclude_from_transactions: false
-                    created_at: "2024-06-25T17:00:04.414Z"
-                    updated_at: "2024-06-26T19:03:38.312Z"
+                    created_at: "2025-06-25T17:00:04.414Z"
+                    updated_at: "2025-06-26T19:03:38.312Z"
                   - id: 119909
                     name: Euro Travel Card
                     type: credit
@@ -3614,8 +3451,8 @@ paths:
                     institution_name: WeBank
                     external_id: null
                     exclude_from_transactions: false
-                    created_at: "2024-06-25T17:00:04.414Z"
-                    updated_at: "2024-06-26T19:03:38.312Z"
+                    created_at: "2025-06-25T17:00:04.414Z"
+                    updated_at: "2025-06-26T19:03:38.312Z"
         "400":
           description: Bad Request
           content:
@@ -3767,15 +3604,15 @@ paths:
                 subtype: brokerage
                 display_name: null
                 balance: "41211.8000"
-                balance_as_of: "2024-06-25T17:00:04.000Z"
+                balance_as_of: "2025-06-25T17:00:04.000Z"
                 closed_on: null
                 currency: usd
                 to_base: 41211.8
                 institution_name: Fidelity
                 external_id: null
                 exclude_from_transactions: false
-                created_at: "2024-06-25T17:00:04.414Z"
-                updated_at: "2024-06-26T19:03:38.312Z"
+                created_at: "2025-06-25T17:00:04.414Z"
+                updated_at: "2025-06-26T19:03:38.312Z"
         "400":
           description: Bad Request
           content:
@@ -3812,21 +3649,16 @@ paths:
         - manual_accounts
       summary: Update an existing manual account
       description: >-
-        Updates an existing manual account.
-
-
-        You may submit the response from a `GET /manual_accounts/{id}` as the
-        request body which includes system created properties such as `id` or
-        `created_at`, however only the `name`, `type`, `subtype`,
-        `display_name`, `balance`, `balance_as_of`, `closed_on`, `currency`,
-        `institution_name`, `external_id`, and `exclude_from_transactions` can
-        be updated using this API.
-
+        Modifies the properties of an existing manual account.<br><br>
+        
+        You may submit the response from a `GET /manual_accounts/{id}` as the request body, however only certain
+        properties can be updated using this API. The following system set properties are
+        accepted in the request body but their values will be ignored: `id`, `created_at`, and `updated_at`.<br><br>
 
         It is also possible to provide only the properties to be updated in the
         request body, as long as the request includes at least one of the
-        properties listed above. For example a request body that contains only a
-        `name` property is valid.
+        properties that is not listed above. For example a request body that contains only a `name` property is valid.<br><br>
+
       operationId: updateManualAccount
       parameters:
         - name: id
@@ -3872,8 +3704,8 @@ paths:
                   currency: usd
                   institution_name: WeBank
                   exclude_from_transactions: false
-                  created_at: "2024-06-25T17:00:04.414Z"
-                  updated_at: "2024-06-26T19:03:38.312Z"
+                  created_at: "2025-06-25T17:00:04.414Z"
+                  updated_at: "2025-06-26T19:03:38.312Z"
       responses:
         "200":
           description: Manual Account updated successfully
@@ -3890,15 +3722,15 @@ paths:
                     subtype: brokerage
                     display_name: null
                     balance: "41211.8000"
-                    balance_as_of: "2024-06-25T17:00:04.000Z"
+                    balance_as_of: "2025-06-25T17:00:04.000Z"
                     closed_on: null
                     currency: usd
                     to_base: 41211.8
                     external_id: null
                     institution_name: Fidelity
                     exclude_from_transactions: false
-                    created_at: "2024-06-25T17:00:04.414Z"
-                    updated_at: "2024-06-26T19:03:38.312Z"
+                    created_at: "2025-06-25T17:00:04.414Z"
+                    updated_at: "2025-06-26T19:03:38.312Z"
                 closed account:
                   value:
                     id: 119807
@@ -3907,14 +3739,14 @@ paths:
                     subtype: brokerage
                     display_name: null
                     balance: "41211.8000"
-                    balance_as_of: "2024-06-25T17:00:04.000Z"
+                    balance_as_of: "2025-06-25T17:00:04.000Z"
                     closed_on: "2024-10-06"
                     currency: usd
                     to_base: 41211.8
                     external_id: null
                     institution_name: Fidelity
                     exclude_from_transactions: true
-                    created_at: "2024-06-25T17:00:04.414Z"
+                    created_at: "2025-06-25T17:00:04.414Z"
                     updated_at: "2024-10-06T19:03:09.506Z"
         "400":
           description: Bad Request
@@ -4473,8 +4305,6 @@ paths:
                         currency: usd
                         to_base: 1250.84
                         recurring_id: 994069
-                        overrides:
-                          original_payee: Penny Lane
                         payee: Paycheck
                         category_id: 88
                         notes: null
@@ -4498,7 +4328,6 @@ paths:
                         currency: usd
                         to_base: 21.98
                         recurring_id: null
-                        overrides: null
                         payee: Noodle House
                         category_id: null
                         notes: null
@@ -4522,7 +4351,6 @@ paths:
                         currency: usd
                         to_base: -847.22
                         recurring_id: null
-                        overrides: null
                         payee: Credit Card Payment
                         category_id: 82
                         is_pending: false
@@ -4545,7 +4373,6 @@ paths:
                         currency: usd
                         to_base: 250
                         recurring_id: null
-                        overrides: null
                         payee: Fidelity
                         category_id: 82
                         notes: Transfer from Checking to Fidelity
@@ -4573,8 +4400,6 @@ paths:
                         currency: usd
                         to_base: 1250.84
                         recurring_id: 994069
-                        overrides:
-                          original_payee: Penny Lane
                         payee: Paycheck
                         category_id: 88
                         notes: null
@@ -4598,9 +4423,6 @@ paths:
                         currency: usd
                         to_base: 1250.84
                         recurring_id: 994069
-                        overrides:
-                          original_payee: Penny Lane
-                          original_notes: Yippee!
                         payee: Paycheck
                         category_id: 88
                         notes: null
@@ -4629,8 +4451,6 @@ paths:
                         currency: usd
                         to_base: 1250.84
                         recurring_id: 994069
-                        overrides:
-                          original_payee: Penny Lane
                         payee: Paycheck
                         category_id: 88
                         notes: null
@@ -4654,7 +4474,6 @@ paths:
                         currency: usd
                         to_base: 21.98
                         recurring_id: null
-                        overrides: null
                         payee: Noodle House
                         category_id: null
                         notes: null
@@ -4800,25 +4619,15 @@ paths:
                           - 42.42
                         testObject:
                           foo: bar
-              with skipped duplicates:
+              duplicate external_id:
                 value:
-                  skip_duplicates: true
                   transactions:
-                    - date: "2025-04-20"
-                      amount: "250.0000"
-                      currency: usd
-                      payee: Fidelity
-                      category_id: 82
-                      status: reviewed
-                      manual_account_id: 219807
-                      external_id: "12345"
-                      notes: Duplicate external ID
                     - date: "2024-12-01"
                       amount: "19.99"
                       payee: Test Payee 3
                       manual_account_id: 219807
                       external_id: A658214
-                      notes: API Test created Transaction
+                      notes: API Test created Transaction with new external_id
                       custom_metadata:
                         note: API Test Added Custom MetaData
                         testNumber: 42
@@ -4830,14 +4639,34 @@ paths:
                           - 42.42
                         testObject:
                           foo: bar
+                    - date: "2025-06-20"
+                      amount: "250.0000"
+                      payee: Fidelity
+                      manual_account_id: 219807
+                      external_id: "12345"
+                      notes: API Test created Transaction with duplicate external_id
+              multiple duplicates:
+                value:
+                  skip_duplicates: true
+                  transactions:
+                    - date: "2025-06-24"
+                      amount: "21.9800"
+                      payee: "Noodle House"
+                      notes: "Duplicate date, payee and amount. Note date may need to be changed in \"Try It\" mode."
+                      plaid_account_id: 119805
                     - date: "2025-04-20"
                       amount: "250.0000"
-                      currency: usd
-                      payee: Fidelity
+                      payee: "Fidelity"
                       category_id: 82
-                      status: reviewed
+                      notes: "Duplicate external ID"
+                      external_id: "12345"
                       manual_account_id: 219807
-                      notes: No external ID but still a duplicate
+                    - date: "2024-12-01"
+                      amount: "19.99"
+                      payee: "Test Payee 3"
+                      notes: "API Test created Transaction"
+                      manual_account_id: 219807
+                      external_id: "A658214"
       responses:
         "201":
           description: Created
@@ -4855,7 +4684,6 @@ paths:
                         currency: usd
                         to_base: 42.89
                         recurring_id: null
-                        overrides: null
                         payee: Food Town
                         category_id: 315163
                         notes: null
@@ -4883,7 +4711,6 @@ paths:
                         currency: usd
                         to_base: 99.99
                         recurring_id: null
-                        overrides: null
                         payee: '[No Payee]'
                         category_id: null
                         notes: null
@@ -4911,7 +4738,6 @@ paths:
                         currency: usd
                         to_base: 15
                         recurring_id: null
-                        overrides: null
                         payee: Lunch with James
                         category_id: null
                         notes: Cash Transaction
@@ -4935,7 +4761,6 @@ paths:
                         currency: usd
                         to_base: -9.99
                         recurring_id: null
-                        overrides: null
                         payee: me
                         category_id: null
                         notes: Interest from Investment Account Cash
@@ -4963,7 +4788,6 @@ paths:
                         currency: usd
                         to_base: 19.99
                         recurring_id: null
-                        overrides: null
                         payee: Test Payee 3
                         category_id: null
                         notes: API Test created Transaction
@@ -4991,87 +4815,97 @@ paths:
                           testObject:
                             foo: bar
                     skipped_duplicates: []
-                duplicate_external_ids_ignored:
+                duplicate external id skipped:
                   value:
                     transactions:
                       - id: 123456789
-                        date: "2024-11-01"
-                        amount: "-9.99"
+                        date: "2024-12-01"
+                        amount: "19.99"
                         currency: usd
-                        to_base: -9.99
+                        to_base: 19.99
                         recurring_id: null
-                        overrides: null
-                        payee: Test Payee 2
+                        payee: Test Payee 3
                         category_id: null
-                        notes: API Test created Transaction
+                        notes: API Test created Transaction with new external_id
                         status: unreviewed
                         is_pending: false
-                        created_at: "2024-11-20T16:24:20.028Z"
-                        updated_at: "2024-11-20T16:24:20.028Z"
+                        created_at: "2025-07-18T14:15:23.159Z"
+                        updated_at: "2025-07-18T14:15:23.159Z"
                         parent_id: null
                         is_group: false
                         group_id: null
-                        manual_account_id: null
+                        manual_account_id: 219807
                         plaid_account_id: null
                         tag_ids: []
                         source: api
-                        external_id: null
-                        custom_metadata: null
-                        plaid_metadata: null
-                    skipped_duplicates: []
-                with skipped duplicates:
-                  value:
-                    transactions:
-                      - id: 123456789
-                        date: "2024-11-01"
-                        amount: "-9.99"
-                        currency: usd
-                        to_base: -9.99
-                        recurring_id: null
-                        overrides: null
-                        payee: Test Payee 2
-                        category_id: null
-                        notes: API Test created Transaction
-                        status: unreviewed
-                        is_pending: false
-                        created_at: "2024-11-20T16:24:20.028Z"
-                        updated_at: "2024-11-20T16:24:20.028Z"
-                        parent_id: null
-                        is_group: false
-                        group_id: null
-                        manual_account_id: null
-                        plaid_account_id: null
-                        tag_ids: []
-                        source: api
-                        external_id: null
-                        custom_metadata: null
-                        plaid_metadata: null
+                        external_id: A658214
+                        custom_metadata:
+                          note: API Test Added Custom MetaData
+                          testNumber: 42
+                          testBool: false
+                          testArray:
+                            - 1
+                            - foo
+                            - false
+                            - 42.42
+                          testObject:
+                            foo: bar
                     skipped_duplicates:
                       - reason: duplicate_external_id
-                        existing_transaction_id: 2112150723
-                        request_transaction_index: 0
+                        request_transaction_index: 1
+                        existing_transaction_id: 2112150651
                         request_transaction:
-                          date: "2025-04-20"
+                          date: "2025-06-20"
                           amount: "250.0000"
-                          currency: usd
                           payee: Fidelity
-                          category_id: 82
-                          status: reviewed
                           manual_account_id: 219807
                           external_id: "12345"
-                          notes: Duplicate external ID
+                          notes: API Test created Transaction with duplicate external_id
+                multiple skipped duplicates:
+                  value:
+                    transactions:
+                      - id: 123456789
+                        date: "2024-12-01"
+                        amount: "19.99"
+                        currency: usd
+                        to_base: 19.99
+                        recurring_id: null
+                        payee: Test Payee 3
+                        category_id: null
+                        notes: API Test created Transaction
+                        status: unreviewed
+                        is_pending: false
+                        created_at: "2025-07-18T14:05:29.253Z"
+                        updated_at: "2025-07-18T14:05:29.253Z"
+                        parent_id: null
+                        is_group: false
+                        group_id: null
+                        manual_account_id: 219807
+                        plaid_account_id: null
+                        tag_ids: []
+                        source: api
+                        external_id: A658214
+                    skipped_duplicates:
                       - reason: duplicate_payee_amount_date
-                        existing_transaction_id: 2112150723
-                        request_transaction_index: 2
+                        request_transaction_index: 
+                        existing_transaction_id: 2112150654
+                        request_transaction:
+                          date: "2025-06-24"
+                          amount: "21.9800"
+                          payee: Noodle House
+                          notes: Duplicate date, payee and amount. Note date may need to be changed in "Try It" mode.
+                          plaid_account_id: 119805
+                      - reason: duplicate_external_id
+                        request_transaction_index: 1
+                        existing_transaction_id: 2112150651
                         request_transaction:
                           date: "2025-04-20"
                           amount: "250.0000"
-                          currency: usd
                           payee: Fidelity
                           category_id: 82
-                          status: reviewed
+                          notes: Duplicate external ID
+                          external_id: "12345"
                           manual_account_id: 219807
-                          notes: No external ID but still a duplicate
         "400":
           description: Bad Request
           content:
@@ -5088,19 +4922,19 @@ paths:
                         transaction_index: 0
                         error: Invalid Manual Account ID
                         invalid_property: manual_account_id
-                        category_id: 899999999999999
+                        manual_account_id: 9999999
                       - errMsg: "Transaction 1 manual account ID does not belong to your account. ID:
                           999999999999999"
                         transaction_index: 1
                         error: Invalid Manual Account ID
                         invalid_property: manual_account_id
-                        category_id: 999999999999999
+                        manual_account_id: 9999999
                       - errMsg: "Transaction 2 recurring ID does not belong to your account. ID:
                           899999999999999"
                         transaction_index: 2
                         error: Invalid Recurring ID
                         invalid_property: recurring_id
-                        category_id: 899999999999999
+                        recurring_id: 88888888
                 duplicate external_ids within request:
                   value:
                     message: Invalid Request Body
@@ -5129,8 +4963,19 @@ paths:
       tags:
         - transactions (bulk)
       summary: Update multiple transactions
-      description: Use this endpoint to modify properties of several transactions in a
-        single request.
+      description: >-
+        Modifies the properties of multiple existing transactions in a single request.<br><br>
+        
+        You may submit complete transaction objects from the response returned by a `GET /transactions` in the request body for each transaction, however only certain
+        properties can be updated using this API. The following system set properties are
+        accepted in the request body, but their values will be ignored: `id`, `to_base`, `is_pending`, `created_at`, `updated_at`, `source`, and `plaid_metadata`.<br><br>
+        
+        Transactions that have been previously split or grouped may not be
+        modified by this endpoint. Therefore the `is_parent`, `parent_id`, `is_group`, `group_id`, and `children` properties are also ignored when provided in the request body.<br><br>
+
+        Each transaction in the array **must** include an `id` property to identify which transaction to update, along with at least one other property to be updated. For example, a transaction object that contains only an `id` and `category_id` property is valid.<br><br>
+        
+        The request can include between 1 and 500 transactions to update in a single call.
       operationId: updateTransactions
       requestBody:
         required: true
@@ -5140,38 +4985,64 @@ paths:
               type: object
               additionalProperties: false
               properties:
-                ids:
+                transactions:
                   type: array
                   minItems: 1
                   maxItems: 500
-                  description: List of transaction IDs to update.
+                  description: List of transactions to update. Each transaction must have an `id` property and at least one other property to update.
                   items:
-                    type: integer
-                properties_to_update:
-                  $ref: "#/components/schemas/bulkUpdateTransactionsObject"
+                    allOf:
+                      - type: object
+                        required: [id]
+                        properties:
+                          id:
+                            type: integer
+                            format: int64
+                            description: The ID of the transaction to update
+                      - $ref: "#/components/schemas/updateTransactionObject"
               required:
-                - ids
-                - properties_to_update
+                - transactions
             examples:
               bulk update transactions:
                 value:
-                  ids:
-                    - 2112150654
-                    - 2112150649
-                    - 2112140372
-                  properties_to_update:
-                    category_id: 315162
-                    notes: "Treat restaurants the same as groceries"
-              invalid ids:
+                  transactions:
+                    - id: 2112150654
+                      category_id: 315162
+                      notes: "Treat restaurants the same as groceries"
+                    - id: 2112150649
+                      category_id: 315162
+                      notes: "Treat restaurants the same as groceries"
+                    - id: 2112140372
+                      category_id: 315162
+                      notes: "Treat restaurants the same as groceries"
+              update with full objects:
                 value:
-                  ids:
-                    - 1
-                    - 2112150654
-                    - 2112150649
-                    - 2
-                    - 2112140372
-                  properties_to_update:
-                    category_id: 315162
+                  transactions:
+                    - id: 2112150654
+                      date: "2024-12-09"
+                      amount: "300.00"
+                      currency: usd
+                      to_base: 300
+                      recurring_id: null
+                      payee: Best Buy
+                      category_id: 315162
+                      notes: Electronics
+                      status: reviewed
+                      is_pending: false
+                      created_at: "2024-12-09T17:00:06.192Z"
+                      updated_at: "2024-12-09T17:00:06.733Z"
+                      is_parent: false
+                      parent_id: null
+                      is_group: false
+                      group_id: null
+                      manual_account_id: null
+                      plaid_account_id: 119810
+                      tag_ids: []
+                      source: plaid
+                      external_id: null
+                    - id: 2112150649
+                      category_id: 315162
+                      notes: "Updated via bulk API"
 
       responses:
         "200":
@@ -5196,7 +5067,6 @@ paths:
                         currency: "usd"
                         to_base: 21.98
                         recurring_id: null
-                        overrides: null
                         payee: "Noodle House"
                         category_id: 315162
                         notes: "Treat restaurants the same as groceries"
@@ -5240,7 +5110,6 @@ paths:
                         currency: "usd"
                         to_base: 4.13
                         recurring_id: 994081
-                        overrides: null
                         payee: "Holey Donuts"
                         category_id: 315162
                         notes: "Treat restaurants the same as groceries"
@@ -5266,7 +5135,6 @@ paths:
                         currency: "usd"
                         to_base: 50
                         recurring_id: null
-                        overrides: null
                         payee: "Starbucks"
                         category_id: 315162
                         notes: "Treat restaurants the same as groceries"
@@ -5533,7 +5401,6 @@ paths:
                     currency: usd
                     to_base: 21.98
                     recurring_id: null
-                    overrides: null
                     payee: Noodle House
                     category_id: null
                     notes: null
@@ -5558,8 +5425,6 @@ paths:
                     currency: usd
                     to_base: 1250.84
                     recurring_id: 994069
-                    overrides:
-                      original_payee: Penny Lane
                     payee: Paycheck
                     category_id: null
                     notes: null
@@ -5597,7 +5462,6 @@ paths:
                     currency: usd
                     to_base: 25.69
                     recurring_id: null
-                    overrides: null
                     payee: Valero
                     category_id: 315174
                     notes: Net Gas for roadtrip
@@ -5622,7 +5486,6 @@ paths:
                         currency: usd
                         to_base: 25
                         recurring_id: null
-                        overrides: null
                         payee: Me
                         category_id: 315174
                         notes: Gas repay from Tim for roadtrip
@@ -5647,7 +5510,6 @@ paths:
                         currency: usd
                         to_base: 25
                         recurring_id: null
-                        overrides: null
                         payee: Me
                         category_id: 315174
                         notes: Gas repay from Liz for roadtrip
@@ -5672,7 +5534,6 @@ paths:
                         currency: usd
                         to_base: 75.69
                         recurring_id: null
-                        overrides: null
                         payee: Valero
                         category_id: 315174
                         notes: Gas on roadtrip with Tim and Liz
@@ -5727,25 +5588,20 @@ paths:
         - transactions
       summary: Update an existing transaction
       description: >-
-        Updates an existing transaction.
-
-
-        You may submit the response from a `GET /transactions/{id}` as the
-        request body which includes system created properties such as `id`,
-        however only the `category_id`, `payee`, `notes`, `date`, `amount`,
-        `currency`, `status`, `asset_id`, `plaid_account_id`, `recurring_id`,
-        `tag_ids`, `additional_tag_ids`, `external_id`, and `custom_metadata`
-        properties can be updated using this API.
-
+        Modifies the properties of an existing transaction.<br><br>
+        
+        You may submit the response from a `GET /transactions/{id}` as the request body, however only certain
+        properties can be updated using this API. The following system set properties are
+        accepted in the request body but their values will be ignored: `id`, `to_base`, `is_pending`, `created_at`, `updated_at`, `source`, and `plaid_metadata`.<br><br>
+        
+        Transactions that have been previously split or grouped may not be
+        modified by this endpoint. Therefore the `is_parent`, `parent_id`, `is_group`, `group_id`, and `children` properties are also ignored when provided in the request body.<br><br>
 
         It is also possible to provide only the properties to be updated in the
         request body, as long as the request includes at least one of the
-        properties listed above. For example a request body that contains only
-        an `id` attribute is valid.
-
-
-        Transactions that have been previously split or grouped may not be
-        modified by this endpoint.
+        properties that is not listed above. For example a request body that contains only
+        an `category_id` attribute is valid.
+        
       operationId: updateTransaction
       parameters:
         - name: id
@@ -5786,7 +5642,6 @@ paths:
                   currency: usd
                   to_base: 300
                   recurring_id: null
-                  overrides: null
                   payee: Best Buy
                   category_id: 315162
                   notes: Electronics
@@ -5819,7 +5674,6 @@ paths:
                     currency: usd
                     to_base: 300
                     recurring_id: null
-                    overrides: null
                     payee: Best Buy
                     category_id: 315162
                     notes: Electronics
@@ -6046,7 +5900,6 @@ paths:
                         currency: usd
                         to_base: 375
                         recurring_id: null
-                        overrides: null
                         payee: Home Entertainment Transactions
                         category_id: 315628
                         notes: null
@@ -6070,7 +5923,6 @@ paths:
                             currency: usd
                             to_base: 75
                             recurring_id: null
-                            overrides: null
                             payee: Target
                             category_id: 315628
                             notes: Household items
@@ -6093,7 +5945,6 @@ paths:
                             currency: usd
                             to_base: 300
                             recurring_id: null
-                            overrides: null
                             payee: Best Buy
                             category_id: 315628
                             notes: Electronics
@@ -6278,7 +6129,6 @@ paths:
                         currency: usd
                         to_base: 88.45
                         recurring_id: null
-                        overrides: null
                         payee: Food Town
                         category_id: 315162
                         notes: null
@@ -6302,7 +6152,6 @@ paths:
                             currency: usd
                             to_base: 44.23
                             recurring_id: null
-                            overrides: null
                             payee: Food Town - Lenny
                             category_id: 315162
                             notes: null
@@ -6325,7 +6174,6 @@ paths:
                             currency: usd
                             to_base: 44.22
                             recurring_id: null
-                            overrides: null
                             payee: Food Town - Penny
                             category_id: 315162
                             notes: null
@@ -6431,9 +6279,8 @@ paths:
       summary: Attach a file to a transaction
       operationId: attachFileToTransaction
       description: >-
-        Attaches a file to a transaction. The file must be less than 10MB in size.
-        Supported file types are: image/jpeg, image/png, application/pdf, image/heic, image/heif.
-        The file will be attached to the transaction and can be downloaded using the `GET /transactions/attachments/{file_id}/download` endpoint.
+        Attaches a file to a transaction. The file must be less than 10MB in size.<br><br>
+        The file will be attached to the transaction and can be downloaded from the link returned by a `GET /transactions/attachments/{file_id}` request.
       parameters:
         - name: transaction_id
           in: path
@@ -6491,6 +6338,7 @@ paths:
                 type: "image/png"
                 size: 4330
                 notes: null
+                source: "api"
                 created_at: "2025-06-11T22:33:20.294Z"
         "400":
           description: Invalid request
@@ -6515,9 +6363,9 @@ paths:
           description: Transaction not found
   /transactions/attachments/{file_id}:
     get:
-      summary: Get a file attachment details
-      description: Returns an object that describes the file attachment.
-      operationId: getTransactionAttachmentDetails
+      summary: Get a url to download a file attachment
+      description: Returns a signed url that can be used to download the file attachment.
+      operationId: getTransactionAttachmentUrl
       tags:
         - transactions (files)
       parameters:
@@ -6526,7 +6374,7 @@ paths:
           required: true
           schema:
             type: integer
-            description: The ID of the file attachment to get
+            description: The ID of the file attachment to download
           examples:
             existing file attachment id:
               summary: Basic file attachment by id request
@@ -6536,27 +6384,24 @@ paths:
               value: 9999999999999
       responses:
         "200":
-          description: Successfully retrieved the file attachment URL
+          description: Successfully retrieved the file attachment
           content:
             application/json:
               schema:
-                type: object
                 properties:
-                  transaction_id:
-                    type: integer
-                    description: The ID of the transaction that the file attachment is attached to
-                  file:
-                    $ref: "#/components/schemas/transactionAttachmentObject"
+                  url:
+                    type: string
+                    description: The signed url to download the file attachment
+                  expires_at:
+                    type: string
+                    format: date-time
+                    description: The date and time the signed url will expire
+                required:
+                  - url
+                  - expires_at
               example:
-                transaction_id: 2112140368
-                file:
-                  id: 1234567890
-                  uploaded_by: 18328
-                  name: "Receipt.jpg"
-                  type: "image/jpeg"
-                  size: 289
-                  notes: "Took a picture of the receipt"
-                  created_at: "2025-05-11T19:00:06.192Z"
+                url: "https://files.lunchmoney.app/66938-41ebb56a066bf09898de.png?X-Header1=X-Value1&X-Header2=Test-Do-Not-Use"
+                expires_at: "2025-07-14T12:00:00Z"
         "401":
           $ref: "#/components/responses/unauthorizedToken"
         "404":
@@ -6566,7 +6411,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/errorResponseObject"
               example:
-                description: File attachment not found
                 message: Not Found
                 errors:
                   - errMsg: File attachment 1234567890 not found
@@ -6607,95 +6451,6 @@ paths:
                 message: Not Found
                 errors:
                   - errMsg: File attachment 1234567890 not found
-  /transactions/attachments/{file_id}/download:
-    get:
-      summary: Download a file attachment
-      description: Returns the contents of the file attachment directly.
-      operationId: getTransactionAttachment
-      tags:
-        - transactions (files)
-      parameters:
-        - name: file_id
-          in: path
-          required: true
-          schema:
-            type: integer
-            description: The ID of the file attachment to download
-          examples:
-            existing file attachment id:
-              summary: Basic file attachment by id request
-              value: 1234567890
-            id not found:
-              summary: Example of an id that doesn't exist
-              value: 9999999999999
-      responses:
-        "200":
-          description: Successfully retrieved the file attachment
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
-        "401":
-          $ref: "#/components/responses/unauthorizedToken"
-        "404":
-          description: File attachment not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/errorResponseObject"
-              example:
-                message: Not Found
-                errors:
-                  - errMsg: File attachment 1234567890 not found
-  /transactions/attachments/{file_id}/url:
-    get:
-      summary: Get a file attachment download URL
-      description: Returns a URL that can be used to download the file attachment.
-      operationId: getTransactionAttachmentUrl
-      tags:
-        - transactions (files)
-      parameters:
-        - name: file_id
-          in: path
-          required: true
-          schema:
-            type: integer
-          description: The ID of the file attachment to get
-          examples:
-            existing file attachment id:
-              summary: Basic file attachment by id request
-              value: 1234567890
-            id not found:
-              summary: Example of an id that doesn't exist
-              value: 9999999999999
-      responses:
-        "200":
-          description: Successfully retrieved the file attachment URL
-          content:
-            application/json:
-              schema:
-                properties:
-                  url:
-                    type: string
-                    format: uri
-                    description: The URL to download the file attachment
-                required:
-                  - url
-              example:
-                url: https://api.lunchmoney.app/v2/this-is-a-signed-temporary-url
-        "401":
-          $ref: "#/components/responses/unauthorizedToken"
-        "404":
-          description: File attachment not found          
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/errorResponseObject"
-              example:
-                message: Not Found
-                errors:
-                  - errMsg: File attachment 1234567890 not found
 
 
   /tags:
@@ -6722,22 +6477,22 @@ paths:
                   - id: 94317
                     name: Penny's
                     description: For transactions not related to Lenny
-                    updated_at: "2024-02-28T09:49:03.238Z"
-                    created_at: "2024-01-28T09:49:03.238Z"
+                    updated_at: "2025-02-28T09:49:03.238Z"
+                    created_at: "2025-01-28T09:49:03.238Z"
                     archived: false
                     archived_at: null
                   - id: 94318
                     name: Road Trip
                     description: ""
-                    updated_at: "2024-02-28T09:50:03.238Z"
-                    created_at: "2024-01-28T09:50:03.238Z"
+                    updated_at: "2025-02-28T09:50:03.238Z"
+                    created_at: "2025-01-28T09:50:03.238Z"
                     archived: false
                     archived_at: null
                   - id: 94319
                     name: Date Night
                     description: ""
-                    updated_at: "2024-02-28T09:59:03.238Z"
-                    created_at: "2024-01-28T10:02:03.238Z"
+                    updated_at: "2025-02-28T09:59:03.238Z"
+                    created_at: "2025-01-28T10:02:03.238Z"
                     archived: false
                     archived_at: null
         "400":
@@ -6857,8 +6612,8 @@ paths:
                 id: 94319
                 name: Date Night
                 description: ""
-                updated_at: "2024-02-28T09:59:03.238Z"
-                created_at: "2024-01-28T10:02:03.238Z"
+                updated_at: "2025-02-28T09:59:03.238Z"
+                created_at: "2025-01-28T10:02:03.238Z"
                 archived: false
                 archived_at: null
         "400":
@@ -6897,17 +6652,15 @@ paths:
         - tags
       summary: Update an existing tag
       description: >-
-        Updates an existing tag.
-
-
-        You may submit the response from a `GET /tags/{id}` as the request body
-        which includes system created properties such as `id`, however only the
-        `name`, `description`, and `archived`, can be updated using this API.
-
+        Updates an existing tag.<br><br>
+        
+        You may submit the response from a `GET /tags/{id}` as the request body, however only certain
+        properties can be updated using this API. The following system set properties are
+        accepted in the request body but their values will be ignored: `id`, `updated_at`, `created_at`, and `archived_at`.<br><br>
 
         It is also possible to provide only the properties to be updated in the
         request body, as long as the request includes at least one of the
-        properties listed above. For example a request body that contains only a
+        properties that is not listed above. For example a request body that contains only a
         `name` attribute is valid.
       operationId: updateTag
       parameters:
@@ -6939,8 +6692,8 @@ paths:
                   id: 94319
                   name: Updated Tag Name
                   description: API Updated Description
-                  updated_at: "2024-02-28T09:59:03.238Z"
-                  created_at: "2024-01-28T10:02:03.238Z"
+                  updated_at: "2025-02-28T09:59:03.238Z"
+                  created_at: "2025-01-28T10:02:03.238Z"
                   archived: false
                   archived_at: null
       responses:
@@ -6956,8 +6709,8 @@ paths:
                     id: 94319
                     name: Updated Tag Name
                     description: null
-                    updated_at: "2024-02-28T09:59:03.238Z"
-                    created_at: "2024-01-28T10:02:03.238Z"
+                    updated_at: "2025-02-28T09:59:03.238Z"
+                    created_at: "2025-01-28T10:02:03.238Z"
                     archived: false
                     archived_at: null
                 new name and description:
@@ -6965,8 +6718,8 @@ paths:
                     id: 94319
                     name: Updated Tag Name
                     description: API Updated Description
-                    updated_at: "2024-02-28T09:59:03.238Z"
-                    created_at: "2024-01-28T10:02:03.238Z"
+                    updated_at: "2025-02-28T09:59:03.238Z"
+                    created_at: "2025-01-28T10:02:03.238Z"
                     archived: false
                     archived_at: null
         "400":
@@ -7164,8 +6917,8 @@ paths:
                           transaction_id: 2212150656
                       missing_transaction_dates: []
                     created_by: 18328
-                    created_at: "2024-06-28T01:01:38.195Z"
-                    updated_at: "2024-06-28T01:01:38.195Z"
+                    created_at: "2025-06-28T01:01:38.195Z"
+                    updated_at: "2025-06-28T01:01:38.195Z"
                     source: manual
         "400":
           description: Bad Request
