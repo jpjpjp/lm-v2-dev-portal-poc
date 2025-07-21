@@ -1464,7 +1464,7 @@ components:
           enum:
             - duplicate_external_id
             - duplicate_payee_amount_date
-        request_transaction_index:
+        request_transactions_index:
           type: integer
           format: int64
           description: The index of the transaction in the request body's transactions
@@ -2263,6 +2263,13 @@ components:
           type: array
           items:
             type: object
+            properties:
+              errMsg:
+                type: string
+                description: Human-readable error message
+            required:
+              - errMsg
+            additionalProperties: true
       required:
         - message
         - errors
@@ -4852,7 +4859,7 @@ paths:
                             foo: bar
                     skipped_duplicates:
                       - reason: duplicate_external_id
-                        request_transaction_index: 1
+                        request_transactions_index: 1
                         existing_transaction_id: 2112150651
                         request_transaction:
                           date: "2025-06-20"
@@ -4887,7 +4894,7 @@ paths:
                         external_id: A658214
                     skipped_duplicates:
                       - reason: duplicate_payee_amount_date
-                        request_transaction_index: 
+                        request_transactions_index: 
                         existing_transaction_id: 2112150654
                         request_transaction:
                           date: "2025-06-24"
@@ -4896,7 +4903,7 @@ paths:
                           notes: Duplicate date, payee and amount. Note date may need to be changed in "Try It" mode.
                           plaid_account_id: 119805
                       - reason: duplicate_external_id
-                        request_transaction_index: 1
+                        request_transactions_index: 1
                         existing_transaction_id: 2112150651
                         request_transaction:
                           date: "2025-04-20"
@@ -4919,19 +4926,19 @@ paths:
                     errors:
                       - errMsg: "Transaction 0 manual account ID does not belong to your account. ID:
                           899999999999999"
-                        transaction_index: 0
+                        transactions_index: 0
                         error: Invalid Manual Account ID
                         invalid_property: manual_account_id
                         manual_account_id: 9999999
                       - errMsg: "Transaction 1 manual account ID does not belong to your account. ID:
                           999999999999999"
-                        transaction_index: 1
+                        transactions_index: 1
                         error: Invalid Manual Account ID
                         invalid_property: manual_account_id
                         manual_account_id: 9999999
                       - errMsg: "Transaction 2 recurring ID does not belong to your account. ID:
                           899999999999999"
-                        transaction_index: 2
+                        transactions_index: 2
                         error: Invalid Recurring ID
                         invalid_property: recurring_id
                         recurring_id: 88888888
@@ -4943,14 +4950,14 @@ paths:
                         error: Duplicate External ID
                         transaction_property: external_id
                         external_id: "12345"
-                        transaction_indices:
+                        transactions_indices:
                           - 0
                           - 1
                       - errMsg: Duplicate External IDs found in the request body
                         error: Duplicate External ID
                         transaction_property: external_id
                         external_id: "54321"
-                        transaction_indices:
+                        transactions_indices:
                           - 2
                           - 3
         "401":
@@ -5003,7 +5010,7 @@ paths:
               required:
                 - transactions
             examples:
-              bulk update transactions:
+              categorize multiple transactions:
                 value:
                   transactions:
                     - id: 2112150654
@@ -5018,32 +5025,53 @@ paths:
               update with full objects:
                 value:
                   transactions:
-                    - id: 2112150654
-                      date: "2024-12-09"
-                      amount: "300.00"
-                      currency: usd
-                      to_base: 300
-                      recurring_id: null
-                      payee: Best Buy
-                      category_id: 315162
-                      notes: Electronics
-                      status: reviewed
+                    - id: 2112150688
+                      date: "2025-07-17"
+                      amount: "4.1300"
+                      currency: "usd"
+                      to_base: 4.13
+                      recurring_id: 994081
+                      payee: "Holey Donuts"
+                      category_id: 315164
+                      notes: "Coffee - cash"
+                      status: "reviewed"
                       is_pending: false
-                      created_at: "2024-12-09T17:00:06.192Z"
-                      updated_at: "2024-12-09T17:00:06.733Z"
+                      created_at: "2025-07-17T17:00:06.192Z"
+                      updated_at: "2025-07-17T17:00:06.192Z"
                       is_parent: false
                       parent_id: null
                       is_group: false
                       group_id: null
                       manual_account_id: null
-                      plaid_account_id: 119810
-                      tag_ids: []
-                      source: plaid
+                      plaid_account_id: null
+                      tag_ids:
+                        - 94317
+                      source: "csv"
                       external_id: null
                     - id: 2112150649
                       category_id: 315162
-                      notes: "Updated via bulk API"
-
+                      notes: "Treat restaurants the same as groceries"
+              update with errors:
+                value:
+                  transactions:
+                    - id: 9999999
+                      notes: "Invalid transaction ID"
+                    - id: 2112150688
+                      category_id: 999999999
+                      manual_account_id: 999999999
+                      notes: "Invalid category and manual account IDs"
+                    - id: 2112150649
+                      plaid_account_id: 999999999
+                      tag_ids: [888888888, 999999999]
+                      notes: "Invalid tag and plaid account IDs"
+                    - id: 2112150649
+                      additional_tag_ids: [888888888, 999999999]
+                      notes: "Invalid additional_tag_ids"
+                    - id: 2212150657
+                      notes: "Transaction belongs to locked plaid account"
+                      payee: "New Payee"
+                      amount: "100.0000"
+                      currency: "jpy"
       responses:
         "200":
           description: Transactions successfully updated
@@ -5062,7 +5090,7 @@ paths:
                   value:
                     transactions:
                       - id: 2112150654
-                        date: "2025-05-24"
+                        date: "2025-06-24"
                         amount: "21.9800"
                         currency: "usd"
                         to_base: 21.98
@@ -5070,10 +5098,10 @@ paths:
                         payee: "Noodle House"
                         category_id: 315162
                         notes: "Treat restaurants the same as groceries"
-                        status: "unreviewed"
+                        status: "reviewed"
                         is_pending: false
-                        created_at: "2025-05-24T17:00:06.192Z"
-                        updated_at: "2025-05-24T17:00:06.192Z"
+                        created_at: "2025-06-24T17:00:06.192Z"
+                        updated_at: "2025-06-24T17:00:06.192Z"
                         is_parent: false
                         parent_id: null
                         is_group: false
@@ -5085,27 +5113,8 @@ paths:
                         source: "plaid"
                         external_id: null
                         custom_metadata: null
-                        plaid_metadata: 
-                          note: "This is an artificially constructed example of metadata"
-                          account_id: "9DYYMLBoaxIqRkAOKaVDuaPZrmE5qJhVxyZyv"
-                          account_owner: null
-                          amount: 21.98
-                          authorized_datetime: "2025-05-24T17:00:06.192Z"
-                          counterparties:
-                            - confidence_level: "LOW"
-                              entity_id: null
-                              logo_url: null
-                              name: "Noodle House"
-                              phone_number: null
-                              type: "merchant"
-                              website: null
-                          iso_currency_code: "USD"
-                          location:
-                            address: null
-                            city: null
-                            country: null
                       - id: 2112150649
-                        date: "2025-05-18"
+                        date: "2025-06-18"
                         amount: "4.1300"
                         currency: "usd"
                         to_base: 4.13
@@ -5115,8 +5124,8 @@ paths:
                         notes: "Treat restaurants the same as groceries"
                         status: "reviewed"
                         is_pending: false
-                        created_at: "2025-05-18T17:00:06.192Z"
-                        updated_at: "2025-05-18T17:00:06.192Z"
+                        created_at: "2025-06-18T17:00:06.192Z"
+                        updated_at: "2025-06-18T17:00:06.192Z"
                         is_parent: false
                         parent_id: null
                         is_group: false
@@ -5128,9 +5137,8 @@ paths:
                         source: "csv"
                         external_id: null
                         custom_metadata: null
-                        plaid_metadata: null
                       - id: 2112140372
-                        date: "2025-05-12"
+                        date: "2025-06-12"
                         amount: "50.00"
                         currency: "usd"
                         to_base: 50
@@ -5140,8 +5148,8 @@ paths:
                         notes: "Treat restaurants the same as groceries"
                         status: "reviewed"
                         is_pending: false
-                        created_at: "2025-05-12T17:00:06.192Z"
-                        updated_at: "2025-05-12T17:00:06.733Z"
+                        created_at: "2025-06-12T17:00:06.192Z"
+                        updated_at: "2025-06-12T17:00:06.733Z"
                         is_parent: false
                         parent_id: null
                         is_group: false
@@ -5152,26 +5160,57 @@ paths:
                         source: "plaid"
                         external_id: null
                         custom_metadata: null
-                        plaid_metadata: 
-                          note: "This is an artificially constructed example of metadata"
-                          account_id: "9DYYMLBoaxIqRkAOKaVDuaPZrmE5qJhVxyZyv"
-                          account_owner: null
-                          amount: 50
-                          authorized_datetime: "2025-05-12T17:00:06.192Z"
-                          counterparties:
-                            - confidence_level: "LOW"
-                              entity_id: null
-                              logo_url: null
-                              name: "Starbucks"
-                              phone_number: null
-                              type: "merchant"
-                              website: null
-                          iso_currency_code: "USD"
-                          location:
-                            address: null
-                            city: null
-                            country: null
-
+                update with full objects:
+                  value:
+                    transactions:
+                      - id: 2112150688
+                        date: "2025-07-17"
+                        amount: "4.1300"
+                        currency: "usd"
+                        to_base: 4.13
+                        recurring_id: 994081
+                        payee: "Holey Donuts"
+                        category_id: 315164
+                        notes: "Coffee - cash"
+                        status: "reviewed"
+                        is_pending: false
+                        created_at: "2025-07-17T17:00:06.192Z"
+                        updated_at: "2025-07-17T17:00:06.192Z"
+                        is_parent: false
+                        parent_id: null
+                        is_group: false
+                        group_id: null
+                        manual_account_id: null
+                        plaid_account_id: null
+                        tag_ids:
+                          - 94317
+                        source: "csv"
+                        external_id: null
+                        custom_metadata: null
+                      - id: 2112150649
+                        date: "2025-06-18"
+                        amount: "4.1300"
+                        currency: "usd"
+                        to_base: 4.13
+                        recurring_id: 994081
+                        payee: "Holey Donuts"
+                        category_id: 315162
+                        notes: "Treat restaurants the same as groceries"
+                        status: "reviewed"
+                        is_pending: false
+                        created_at: "2025-06-18T17:00:06.192Z"
+                        updated_at: "2025-06-18T17:00:06.192Z"
+                        is_parent: false
+                        parent_id: null
+                        is_group: false
+                        group_id: null
+                        manual_account_id: null
+                        plaid_account_id: null
+                        tag_ids:
+                          - 94317
+                        source: "csv"
+                        external_id: null
+                        custom_metadata: null
         "400":
           description: Bad Request
           content:
@@ -5185,22 +5224,78 @@ paths:
                     errors:
                       - errMsg: "Transaction 0 manual account ID does not belong to your account. ID:
                           899999999999999"
-                        transaction_index: 0
+                        transactions_index: 0
                         error: Invalid Manual Account ID
                         invalid_property: manual_account_id
                         category_id: 899999999999999
                       - errMsg: "Transaction 1 manual account ID does not belong to your account. ID:
                           999999999999999"
-                        transaction_index: 1
+                        transactions_index: 1
                         error: Invalid Manual Account ID
                         invalid_property: manual_account_id
                         category_id: 999999999999999
                       - errMsg: "Transaction 2 recurring ID does not belong to your account. ID:
                           899999999999999"
-                        transaction_index: 2
+                        transactions_index: 2
                         error: Invalid Recurring ID
                         invalid_property: recurring_id
                         category_id: 899999999999999
+                update with errors:
+                  value:
+                    message: Invalid Request Body
+                    errors:
+                      - errMsg: "Transaction ID 9999999 does not exist."
+                        error: Invalid Transaction ID
+                        invalid_property: id
+                        transaction_id: 9999999
+                        transactions_index: 0
+                      - errMsg: "Error in transactions[1]: There is no category with the id: 999999999"
+                        transactions_index: 1
+                        error: Invalid Category ID
+                        invalid_property: category_id
+                        category_id: 999999999
+                      - errMsg: "Error in transactions[1]: manual account ID does not belong to your account. ID: 999999999"
+                        transactions_index: 1
+                        error: Invalid Manual Account ID
+                        invalid_property: manual_account_id
+                        manual_account_id: 999999999
+                      - errMsg: "Error in transactions[2]: plaid account ID does not belong to your account. ID: 999999999"
+                        transactions_index: 2
+                        error: Invalid Plaid Account ID
+                        invalid_property: plaid_account_id
+                        plaid_account_id: 999999999
+                      - errMsg: "tag_ids[0] ID does not belong to your account. ID: 888888888"
+                        error: Invalid Tag ID
+                        invalid_property: tag_ids
+                        tag_id: 888888888
+                        tag_ids_index: 0
+                      - errMsg: "tag_ids[1] ID does not belong to your account. ID: 999999999"
+                        error: Invalid Tag ID
+                        invalid_property: tag_ids
+                        tag_id: 999999999
+                        tag_ids_index: 1
+                      - errMsg: "Transaction 3 additional_tag_ids[0] ID does not belong to your account. ID: 888888888"
+                        transactions_index: 3
+                        error: Invalid Tag ID
+                        invalid_property: additional_tag_ids
+                        tag_id: 888888888
+                        additional_tag_ids_index: 0
+                      - errMsg: "Transaction 3 additional_tag_ids[1] ID does not belong to your account. ID: 999999999"
+                        transactions_index: 3
+                        error: Invalid Tag ID
+                        invalid_property: additional_tag_ids
+                        tag_id: 999999999
+                        additional_tag_ids_index: 1
+                      - errMsg: "Cannot change the currency for a transaction that belongs to a Plaid Account which is not configured to allow modifications to transactions. Plaid Account ID: 119804"
+                        error: Transaction belongs to a locked Plaid account
+                        id: 2212150657
+                        transactions_index: 4
+                        locked_property: currency
+                      - errMsg: "Cannot change the amount for a transaction that belongs to a Plaid Account which is not configured to allow modifications to transactions. Plaid Account ID: 119804"
+                        error: Transaction belongs to a locked Plaid account
+                        id: 2212150657
+                        transactions_index: 4
+                        locked_property: amount
                 duplicate external_ids within request:
                   value:
                     message: Invalid Request Body
@@ -5209,14 +5304,14 @@ paths:
                         error: Duplicate External ID
                         transaction_property: external_id
                         external_id: "12345"
-                        transaction_indices:
+                        transactions_indices:
                           - 0
                           - 1
                       - errMsg: Duplicate External IDs found in the request body
                         error: Duplicate External ID
                         transaction_property: external_id
                         external_id: "54321"
-                        transaction_indices:
+                        transactions_indices:
                           - 2
                           - 3
                 invalid ids:
