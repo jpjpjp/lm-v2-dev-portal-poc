@@ -1,13 +1,298 @@
 <style>
-.heading1 {
-    color: red;
-    font-weight:700;
-    font-size: 35px;
+/* Lunch Money API Changelog Styles - Matching support.lunchmoney.app aesthetic */
+
+/* CSS Variables for consistent theming */
+:root {
+  --lm-text-primary: #1f2937;
+  --lm-text-secondary: #6b7280;
+  --lm-text-muted: #9ca3af;
+  --lm-border: #e5e7eb;
+  --lm-border-light: #f3f4f6;
+  --lm-bg: #ffffff;
+  --lm-bg-subtle: #f9fafb;
+  --lm-code-bg: #f6f8fa;
+  --lm-code-border: #e1e4e8;
+  --lm-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --lm-shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --lm-radius: 8px;
+  --lm-radius-sm: 6px;
 }
-.heading2 {
-    color: blue;
-    font-weight:700;
-    font-size: 30px;
+
+/* Typography - System font stack */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--lm-text-primary);
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+/* Headings */
+h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.2;
+  margin: 0 0 0.5em 0;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 26px;
+  font-weight: 650;
+  color: #111827;
+  line-height: 1.3;
+  margin: 2em 0 0.75em 0;
+  padding-bottom: 0.5em;
+  border-bottom: 2px solid var(--lm-border);
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1.4;
+  margin: 1.75em 0 0.75em 0;
+}
+
+h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #374151;
+  line-height: 1.4;
+  margin: 1.5em 0 0.6em 0;
+}
+
+/* Paragraphs and text */
+p {
+  margin: 0.75em 0;
+  color: var(--lm-text-primary);
+  line-height: 1.7;
+}
+
+/* Lists */
+ul, ol {
+  margin: 0.75em 0;
+  padding-left: 1.75em;
+  color: var(--lm-text-primary);
+}
+
+li {
+  margin: 0.5em 0;
+  line-height: 1.7;
+}
+
+/* Links */
+a {
+  color: #2563eb;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* Code */
+code {
+  background: var(--lm-code-bg);
+  border: 1px solid var(--lm-code-border);
+  border-radius: 4px;
+  padding: 0.2em 0.4em;
+  font-size: 0.9em;
+  font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+  color: #e83e8c;
+}
+
+pre {
+  background: var(--lm-code-bg);
+  border: 1px solid var(--lm-code-border);
+  border-radius: var(--lm-radius-sm);
+  padding: 1em;
+  overflow-x: auto;
+  margin: 1em 0;
+}
+
+pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--lm-text-primary);
+  font-size: 0.9em;
+}
+
+/* Badge/Pill styles */
+.badge {
+  display: inline-block;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 1;
+  padding: 5px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.badge-breaking {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.badge-deprecated {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.badge-beta {
+  background: #e0f2fe;
+  color: #075985;
+  border: 1px solid #bae6fd;
+}
+
+.badge-new {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+/* Callout/Info boxes using blockquotes */
+blockquote {
+  border-left: 4px solid #93c5fd;
+  background: #eff6ff;
+  padding: 14px 18px;
+  border-radius: var(--lm-radius-sm);
+  margin: 1.25em 0;
+  color: #1e293b;
+}
+
+blockquote.callout-warn {
+  border-left-color: #fbbf24;
+  background: #fffbeb;
+  color: #78350f;
+}
+
+blockquote.callout-danger {
+  border-left-color: #f87171;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+blockquote.callout-info {
+  border-left-color: #60a5fa;
+  background: #eff6ff;
+  color: #1e3a8a;
+}
+
+blockquote.callout-tip {
+  border-left-color: #10b981;
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+blockquote p:first-child {
+  margin-top: 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+blockquote strong {
+  display: block;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+}
+
+/* Section cards - wrapping major sections */
+.section-card {
+  background: var(--lm-bg);
+  border: 1px solid var(--lm-border);
+  border-radius: var(--lm-radius);
+  box-shadow: var(--lm-shadow);
+  padding: 24px 28px;
+  margin: 2em 0;
+  transition: box-shadow 0.2s ease;
+}
+
+.section-card:hover {
+  box-shadow: var(--lm-shadow-lg);
+}
+
+.section-card h2 {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-top: 0;
+}
+
+.section-card h3:first-child {
+  margin-top: 0;
+}
+
+/* Horizontal rule */
+hr {
+  border: 0;
+  border-top: 1px solid var(--lm-border);
+  margin: 2.5em 0;
+}
+
+/* Table of contents styling */
+nav[aria-label="Table of contents"] ul,
+ul:has(> li > a[href^="#"]) {
+  background: var(--lm-bg-subtle);
+  border: 1px solid var(--lm-border);
+  border-radius: var(--lm-radius);
+  padding: 20px 24px;
+  margin: 2em 0;
+  list-style: none;
+  padding-left: 0;
+}
+
+nav[aria-label="Table of contents"] li,
+ul:has(> li > a[href^="#"]) li {
+  margin: 0.4em 0;
+  padding-left: 0;
+}
+
+nav[aria-label="Table of contents"] a,
+ul:has(> li > a[href^="#"]) a {
+  color: var(--lm-text-primary);
+  text-decoration: none;
+  display: block;
+  padding: 4px 0;
+}
+
+nav[aria-label="Table of contents"] a:hover,
+ul:has(> li > a[href^="#"]) a:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+/* Spacing improvements */
+section {
+  margin: 2em 0;
+}
+
+/* Endpoint sections - special styling for endpoint lists */
+.endpoint-list {
+  background: var(--lm-bg-subtle);
+  border-left: 3px solid #3b82f6;
+  padding: 1em 1.5em;
+  margin: 1em 0;
+  border-radius: var(--lm-radius-sm);
+}
+
+.endpoint-list ul {
+  margin: 0.5em 0;
+}
+
+/* Remove that test green div styling if it appears */
+div[style*="color:green"] {
+  display: none;
 }
 </style>
 
@@ -44,11 +329,7 @@
   - [plaid\_accounts endpoints](#plaid_accounts-endpoints)
 
 
-## General changes:
-
-<div style="color:green">
-    Markdown inline css styles
-</div>
+## General changes
 
 ### Versioning
 
