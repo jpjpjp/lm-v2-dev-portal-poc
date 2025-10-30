@@ -3,35 +3,37 @@ info:
   title: Lunch Money API - v2
   description: |-
     ## Overview
-    Welcome to the v2 Lunch Money API.
+    This is a version of the Lunch Money API described using the the OpenAPI 3.X
+    specification. 
 
-    This API reference allows developers to explore the v2 API directly from the docs.
+    The goal of this project is to validate an "API Design First" approach
+    for the Lunch Money API, which should allow us to gather developer feedback
+    prior to implementation in order to develop API endpoints more quickly.
 
-    You may interact with a mock service which demonstrates the v2 API using static mock data.  Requests to the Mock Service will accept any Bearer token string that is 11 or more characters long. Responses to requests will emulate the responses that a real implementation of the API would provide, but no data is actually changed. 
-
-    You may also interact directly with the v2 API using your own Lunch Money API key. See the [Getting Started Guide](../lunch-money-developer-docs/guides/getting-started) for information on how to get started. Be aware that requests made through these docs WILL modify your data.  Any changes made cannot be reversed!
-
-    Choose the server you prefer to interact with from the dropdown menu and add an appropriate Bearer token.  Then click on the "Test Request" button in the endpoint documentation to make a request.
+    This version of the API will differ from the existing v1 beta version. For
+    more information on the changes please see the 
+    [v2 API Changelog](http://localhost:3000/v2/changelog)
 
     Some useful links:
-    - [Migration from v1 API Guide](../lunch-money-developer-docs/legacy-apis/migrating-from-api-v1-to-v2)
-    - [Legacy v1 Lunch Money API Documentation](../lunch-money-developer-docs/legacy-apis/api-v1-reference/assets)
-    - [v2 API Changelog](../lunch-money-developer-docs/reference/api-v2-changelog)
-    - [Supported Currencies](../lunch-money-developer-docs/reference/supported-currencies)
-    - Should we add the legal stuff here?
+    - [Current v1 Lunch Money API Documentation](https://lunchmoney.dev)
+    - [v2 API Changelog](http://localhost:3000/v2/changelog)
+    - [OpenAPI API YAML Specification](http://localhost:3000/v2/openapi/)
+    - [Awesome Lunch Money Projects](https://lunchmoney.dev/#awesome-projects)
   termsOfService: https://lunchmoney.dev/#current-status
   contact:
     email: devsupport@lunchmoney.app
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 2.7.10
+  version: 2.8.0
 
 servers:
-  - url: https://lm-v2-api-mock-data-f24357049a1b.herokuapp.com/v2
-    description: Static Mock v2 Lunch Money API Server - Use 11 character Bearer token
-  - url: https://api.lunchmoney.dev/v2
-    description: v2 via v1 API Lunch Money API Server - Use your own API key with caution!
+  - url: http://localhost:3000/v2
+    description: Static Mock v2 Lunch Money API Server
+      # This service implements the v2 API using static mock data. Requests to POST/PUT/DELETE endpoints are honored and return 
+      # response that a real implementation of the API would provide, but no data is actually changed. <br>
+      # Using this server is a good way to become familiar with the API <br>
+      # To use this server set your Bearer token to any string with 11 or more characters.
 
 tags:
   - name: me
@@ -51,7 +53,7 @@ tags:
     externalDocs:
       description: Learn more about synced accounts
       url: https://support.lunchmoney.app/setup/linked-accounts#how-often-should-i-expect-new-transactions-to-get-imported
-  - name: recurring
+  - name: recurring_items
     description: Access to recurring items
     externalDocs:
       url: https://support.lunchmoney.app/finances/recurring-items
@@ -85,6 +87,8 @@ tags:
     externalDocs:
       description: Learn more about transactions
       url: https://support.lunchmoney.app/finances/transactions
+  - name: summary
+    description: Access to a summary of the user's budget
 
 components:
   schemas:
@@ -99,7 +103,7 @@ components:
           description: User's email
         id:
           type: integer
-          format: int64
+          format: int32
           description: Unique identifier for user
         account_id:
           type: integer
@@ -134,11 +138,12 @@ components:
 
     categoryObject:
       type: object
+      title: category object
       additionalProperties: false
       properties:
         id:
           type: integer
-          format: int64
+          format: int32
           nullable: false
           description: A system defined unique identifier for the category.
         name:
@@ -245,7 +250,7 @@ components:
       properties:
         id:
           type: integer
-          format: int64
+          format: int32
           nullable: false
           description: A system defined unique identifier for the category.
         name:
@@ -353,6 +358,7 @@ components:
           nullable: true
           default: null
           description: The description of the category. Must not exceed 200 characters.
+          minLength: 0 # Allow empty strings
           maxLength: 200
         is_income:
           type: boolean
@@ -395,8 +401,8 @@ components:
           description: The list of existing category objects, or existing category IDs or
             names of new categories to add to the new category group. This
             attribute should only be set if "is_group" is also set to true.<br>
-            The categories or IDs specified must already exist and not belong to
-            an existing category group. Categories that already belong to
+            The categories or IDs specified must already exist and may not be category groups themselves.
+            Categories that already belong to
             another category group will be moved. If strings are specified, they
             will be used as the names of new categories that will be added to
             the new category group. The request will fail if any names are the
@@ -406,7 +412,9 @@ components:
           items:
             oneOf:
               - type: integer
+                description: "ID of an existing category."
               - type: string
+                description: "Name of a new child category to be created."
                 maxLength: 100
               - $ref: "#/components/schemas/categoryObject"
       required:
@@ -432,6 +440,7 @@ components:
           nullable: true
           description: If set the new description of the category. Must not exceed 200
             characters.
+          minLength: 0 # Allow empty strings
           maxLength: 200
         is_income:
           type: boolean
@@ -480,9 +489,11 @@ components:
           items:
             oneOf:
               - type: integer
+                description: "ID of an existing category."
               - type: string
+                description: "Name of a new child category to be created."
                 maxLength: 100
-              - $ref: "#/components/schemas/childCategoryObject"
+              - $ref: "#/components/schemas/categoryObject"
         id:
           type: integer
           format: int64
@@ -589,7 +600,7 @@ components:
             the opposite is true.
         recurring_id:
           type: integer
-          format: int64
+          format: int32
           nullable: true
           description: The unique identifier of the associated recurring item that this
             transaction matched. 
@@ -603,7 +614,7 @@ components:
           maxLength: 140
         category_id:
           type: integer
-          format: int64
+          format: int32
           nullable: true
           description: Unique identifier of associated category set by the user or by a
             matched recurring_item.<br> Category details can be obtained by
@@ -611,7 +622,7 @@ components:
             Category](../operations/getCategoryById) API
         plaid_account_id:
           type: integer
-          format: int64
+          format: int32
           nullable: true
           description: The unique identifier of the plaid account associated with this
             transaction. This will always be null if this transaction is
@@ -620,7 +631,7 @@ components:
             Money GUI.
         manual_account_id:
           type: integer
-          format: int64
+          format: int32
           nullable: true
           description: The unique identifier of the manual account associated with this
             transaction. This will always be null if this transaction is
@@ -649,7 +660,7 @@ components:
             API
           items:
             type: integer
-            format: int64
+            format: int32
         notes:
           type: string
           nullable: true
@@ -667,7 +678,6 @@ components:
           #   reviewed: User has reviewed the transaction, or it was automatically marked as reviewed due to reviewed recurring_item logic
           #   unreviewed: User has not reviewed the transaction and it does not match any reviewed recurring_items.
           #   delete_pending: The synced account deleted this transaction after it was updated by the user. Requires manual intervention.
-          #   pending: Transaction is still pending with the synced institution (not posted).
           description: >
             Status of the transaction:
 
@@ -676,18 +686,16 @@ components:
             logic
 
             - `unreviewed`: User has not reviewed the transaction and it does
-            not match any reviewed recurring_items.
+            not match any reviewed recurring_items. Note that any transactions 
+            where `is_pending` is true will be returned with a status of unreviewed.
 
             - `delete_pending`: The synced account deleted this transaction
             after it was updated by the user. Requires manual intervention.
 
-            - `pending`: Transaction is still pending with the synced
-            institution (not posted).
           enum:
             - reviewed
             - unreviewed
             - delete_pending
-            - pending
         is_pending:
           type: boolean
           description: Denotes if the transaction is pending (not posted). Applies only to
@@ -789,7 +797,7 @@ components:
 
             - `rule`: Transaction was created by a rule to split a transaction
 
-            - `split`: This is a transaction created by splitting another
+            - `split`: Transaction was created by splitting another
             transaction
 
             - `user`: This is a legacy value and is replaced by either csv or
@@ -864,7 +872,7 @@ components:
             the opposite is true.
         recurring_id:
           type: integer
-          format: int64
+          format: int32
           nullable: true
           description: The unique identifier of the associated recurring item that this
             transaction matched. 
@@ -878,10 +886,10 @@ components:
           maxLength: 140
         category_id:
           type: integer
-          format: int64
+          format: int32
           nullable: true
           description: Unique identifier of associated category set by the user or by a
-            matched recurring_item.<br> Category details can be obtained by
+            matched recurring item.<br> Category details can be obtained by
             passing the value of this property to the [Get A Single
             Category](../operations/getCategoryById) API
         notes:
@@ -898,10 +906,9 @@ components:
           description: >
             Status of the transaction.  Will be one of the following values:
           x-enumDescriptions:
-            reviewed: User has reviewed the transaction, or it was automatically marked as reviewed due to reviewed recurring_item logic
-            unreviewed: User has not reviewed the transaction and it does not match any reviewed recurring_items.
+            reviewed: User has reviewed the transaction, or it was automatically marked as reviewed due to reviewed recurring item logic
+            unreviewed: User has not reviewed the transaction and it does not match any reviewed recurring_items. Note that any transactions where `is_pending` is true will be returned with a status of unreviewed.
             delete_pending: The synced account deleted this transaction after it was updated by the user. Requires manual intervention.
-            pending: Transaction is still pending with the synced institution (not posted).
           # description: >
           #   Status of the transaction:
 
@@ -915,13 +922,10 @@ components:
           #   - `delete_pending`: The synced account deleted this transaction
           #   after it was updated by the user. Requires manual intervention.
 
-          #   - `pending`: Transaction is still pending with the synced
-          #   institution (not posted).
           enum:
             - reviewed
             - unreviewed
             - delete_pending
-            - pending
         is_pending:
           type: boolean
           description: Denotes if the transaction is pending (not posted). Applies only to
@@ -968,7 +972,7 @@ components:
             transaction where the `is_group` attribute is true
         manual_account_id:
           type: integer
-          format: int64
+          format: int32
           nullable: true
           description: The unique identifier of the manual account associated with this
             transaction. This will always be null if this transaction is
@@ -977,7 +981,7 @@ components:
             Money GUI.
         plaid_account_id:
           type: integer
-          format: int64
+          format: int32
           nullable: true
           description: The unique identifier of the plaid account associated with this
             transaction. This will always be null if this transaction is
@@ -994,7 +998,7 @@ components:
             API
           items:
             type: integer
-            format: int64
+            format: int32
         source:
           type: string
           nullable: true
@@ -1105,8 +1109,8 @@ components:
               format: double
             - type: string
               pattern: ^-?\d+(\.\d{1,4})?$
-          description: Numeric value of amount. i.e. $4.25 should be denoted as 4.25. Can
-            be a string or a number in double format. Regardless of the value of
+          description: Numeric value of amount without currency symbol. i.e. $4.25 should be denoted as 4.25.
+            May be a string or a number in double format. Regardless of the value of
             the user's `debits_as_negative` property, transactions with positive
             amounts are treated as debits. Set the amount to a negative value to
             insert a credit transaction.
@@ -1123,7 +1127,7 @@ components:
           maxLength: 140
         category_id:
           type: integer
-          format: int64
+          format: int32
           nullable: true
           description: The ID of the category associated with the transactions. If set,
             the category ID must exist for the user's account and it cannot be a
@@ -1139,7 +1143,7 @@ components:
           maxLength: 350
         manual_account_id:
           type: integer
-          format: int64
+          format: int32
           nullable: true
           description: The Unique identifier for the associated manually managed account.
             If set, this must match an existing manual account id associated
@@ -1150,7 +1154,7 @@ components:
             transaction.
         plaid_account_id:
           type: integer
-          format: int64
+          format: int32
           nullable: true
           description: The Unique identifier for the associated plaid synced account. If
             set, this must match an existing plaid account id associated with
@@ -1163,10 +1167,10 @@ components:
             by default), or the insert will fail.
         recurring_id:
           type: integer
-          format: int64
+          format: int32
           nullable: true
-          description: Unique identifier for associated recurring expense. Recurring
-            expense must be associated with the same account.
+          description: Unique identifier for associated recurring item. Recurring
+            item must be associated with the same account.
         status:
           type: string
           description: If set must be either `reviewed` or `unreviewed`. If not set,
@@ -1182,7 +1186,7 @@ components:
             not set, no tags will be associated with the created transaction.
           items:
             type: integer
-            format: int64
+            format: int32
         external_id:
           type: string
           nullable: true
@@ -1225,12 +1229,11 @@ components:
               format: double
             - type: string
               pattern: ^-?\d+(\.\d{1,4})?$
-          description: >
-            Numeric value of amount. i.e. $4.25 should be denoted as 4.25. Can
-            be a string or a number in double format. Regardless of the value of
+          description: Numeric value of amount without currency symbol. i.e. $4.25 should be denoted as 4.25.
+            May be a string or a number in double format. Regardless of the value of
             the user's `debits_as_negative` property, transactions with positive
             amounts are treated as debits. Set the amount to a negative value to
-            insert a credit transaction.<br>
+            insert a credit transaction.<br><br>
 
             May not be updated on transactions that belong to a synced account
             with the "Allow Modifications to Transactions" property disabled.
@@ -1243,7 +1246,7 @@ components:
             - $ref: "#/components/schemas/currencyEnum"
         recurring_id:
           type: integer
-          format: int64
+          format: int32
           nullable: true
           description: The unique identifier of the associated recurring item that this
             transaction matches.
@@ -1255,7 +1258,7 @@ components:
           maxLength: 140
         category_id:
           type: integer
-          format: int64
+          format: int32
           nullable: true
           description: Unique identifier of the category for this transaction. Set this to
             0 to clear the transaction's category.
@@ -1269,7 +1272,7 @@ components:
           maxLength: 350
         manual_account_id:
           type: integer
-          format: int64
+          format: int32
           nullable: true
           description: The unique identifier of the manual account associated with this
             transaction. Set this to zero to disassociate the transaction with
@@ -1279,7 +1282,7 @@ components:
             "Allow Modifications to Transactions" property is not set.
         plaid_account_id:
           type: integer
-          format: int64
+          format: int32
           nullable: true
           description: The unique identifier of the plaid account associated with this
             transaction. If set `manual_account_id` may not also be set to a non
@@ -1296,7 +1299,7 @@ components:
             set `additional_tag_ids` may not be set.
           items:
             type: integer
-            format: int64
+            format: int32
         additional_tag_ids:
           type: array
           nullable: false
@@ -1306,7 +1309,7 @@ components:
             tags. If set `tag_ids` may not be set.
           items:
             type: integer
-            format: int64
+            format: int32
         external_id:
           type: string
           nullable: true
@@ -1368,7 +1371,7 @@ components:
             $ref: "#/components/schemas/childTransactionObject"
           description: An array of child transactions that exists when a transaction has
             been split or if the transaction is a group. Split
-            and Grouped transactions may not be modified this API. Ignored if set. 
+            and Grouped transactions may not be modified using this API. Ignored if set. 
         parent_id:
           type: integer
           format: int64
@@ -1429,7 +1432,7 @@ components:
             parent if not defined.
         category_id:
           type: integer
-          format: int64
+          format: int32
           description: Unique identifier for associated category_id. Category must already
             exist for the account. Will inherit category from the parent if not
             defined.
@@ -1509,7 +1512,7 @@ components:
       properties:
         id:
           type: integer
-          format: int64
+          format: int32
           description: The unique identifier of the attachment
         uploaded_by:
           type: integer
@@ -1541,7 +1544,7 @@ components:
       properties:
         id:
           type: integer
-          format: int64
+          format: int32
           description: The unique identifier of this account
         name:
           type: string
@@ -1557,6 +1560,8 @@ components:
           nullable: true
           description: Optional account subtype. Examples include<br> - retirement -
             checking - savings - prepaid credit card
+          minLength: 1
+          maxLength: 100
         display_name:
           type: string
           nullable: true
@@ -1595,6 +1600,11 @@ components:
           minLength: 0
           maxLength: 75
           description: An optional external_id that may be set or updated via the API
+        custom_metadata:
+          type: object
+          nullable: true
+          description: User defined JSON data that can be set or cleared via the API.
+          additionalProperties: true
         exclude_from_transactions:
           type: boolean
           default: false
@@ -1646,11 +1656,12 @@ components:
           description: If set an optional account subtype. Examples include<br> -
             retirement - checking - savings - prepaid credit card
           minLength: 1
-          maxLength: 75
+          maxLength: 100
           example: prepaid credit card
         display_name:
           type: string
-          description: Display name of the account as set by user.
+          description: Display name of the account as set by user.<br>
+            This must be unique for the user.  If not set, it will be derived from the `institution_name` (if any) concatenated with the `name`.
           example: Savings
         balance:
           oneOf:
@@ -1692,6 +1703,13 @@ components:
           minLength: 0
           maxLength: 75
           description: An optional external_id that may be set or updated via the API
+        custom_metadata:
+          type: object
+          nullable: true
+          description: An optional JSON object that includes additional data related to
+            this account. This must be a valid JSON object and, when
+            stringified, must not exceed 4096 characters.
+          additionalProperties: true
         exclude_from_transactions:
           type: boolean
           description: If true, this asset will not show up as an option for assignment
@@ -1710,7 +1728,7 @@ components:
       properties:
         id:
           type: integer
-          format: int64
+          format: int32
           description: System defined unique identifier of this account. Ignored if set.
         name:
           type: string
@@ -1726,11 +1744,12 @@ components:
           description: If set an optional account subtype. Examples include<br> -
             retirement - checking - savings - prepaid credit card
           minLength: 1
-          maxLength: 75
+          maxLength: 100
         display_name:
           type: string
           nullable: true
-          description: If set, an optional display name for the account.
+          description: If set, an optional display name for the account.<br>
+            This must be unique for the user.  If not set, it will be derived from the `institution_name` (if any) concatenated with the `name`.
         balance:
           oneOf:
             - type: number
@@ -1746,10 +1765,10 @@ components:
           oneOf:
             - format: date-time
             - format: date
-          description: If set to a date-time string in ISO 8601 extended format, the new
-            date that balance was last updated at. This property is ignored if
-            `balance` is not also set. If `balance` is set and this property is
-            not set the current time is used.
+          description: "A new date for the `updated_at` property. 
+            May be set as a date, ie: YYYY-MM-DD, or date-time string in ISO 8601 extended format.
+            This property is ignored if `balance` is not also set. If `balance` is set and this property is
+            not set the current time is used."
         closed_on:
           type: string
           format: date
@@ -1772,6 +1791,13 @@ components:
           minLength: 0
           maxLength: 75
           description: An optional external_id that may be set or updated via the API
+        custom_metadata:
+          type: object
+          nullable: true
+          description: An optional JSON object that includes additional data related to
+            this account. This must be a valid JSON object and, when
+            stringified, must not exceed 4096 characters.
+          additionalProperties: true
         exclude_from_transactions:
           type: boolean
           description: If set, this will indicate if this account will not show up as an
@@ -1795,7 +1821,7 @@ components:
       properties:
         id:
           type: integer
-          format: int64
+          format: int32
           description: The unique identifier of this account
         date_linked:
           type: string
@@ -1928,7 +1954,7 @@ components:
       properties:
         id:
           type: integer
-          format: int64
+          format: int32
           description: Unique identifier for the tag.
         name:
           type: string
@@ -2021,7 +2047,7 @@ components:
           description: If set will indicate if this category is archived.
         id:
           type: integer
-          format: int64
+          format: int32
           description: System defined unique identifier for the category. Ignored if set.
         updated_at:
           type: string
@@ -2071,6 +2097,7 @@ components:
       properties:
         id:
           type: integer
+          format: int32
           description: The unique identifier of this recurring item
         description:
           type: string
@@ -2629,6 +2656,354 @@ components:
         - zwl
     # CSpell: enable
 
+    # Summary endpoint response schemas
+    alignedSummaryResponseObject:
+      type: object
+      title: aligned summary response object
+      additionalProperties: false
+      properties:
+        totals:
+          $ref: "#/components/schemas/summaryTotalsObject"
+        aligned:
+          type: boolean
+          enum: [true]
+          description: "true if start_date and end_date are aligned with budget period setting"
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/alignedSummaryCategoryObject"
+      required:
+        - aligned
+        - categories
+
+    nonAlignedSummaryResponseObject:
+      type: object
+      title: non-aligned summary response object
+      additionalProperties: false
+      properties:
+        totals:
+          $ref: "#/components/schemas/summaryTotalsObject"
+        aligned:
+          type: boolean
+          enum: [false]
+          description: "true if start_date and end_date are aligned with budget period setting"
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/nonAlignedSummaryCategoryObject"
+      required:
+        - aligned
+        - categories
+
+    summaryTotalsObject:
+      type: object
+      additionalProperties: false
+      x-internal: true # Don't display in schemas section of docs
+      description: Total inflow and outflow for the given date range.  This object is returned when the query parameter `include_totals` is set to `true`.
+      properties:
+        inflow:
+          $ref: "#/components/schemas/summaryTotalsBreakdownObject"
+        outflow:
+          $ref: "#/components/schemas/summaryTotalsBreakdownObject"
+
+    summaryTotalsBreakdownObject:
+      type: object
+      additionalProperties: false
+      x-internal: true # Don't display in schemas section of docs
+      properties:
+        other_activity:
+          description: Total amount, in the user's default currency, of non recurring activity for the given date range.
+          type: number
+        recurring_activity:
+          description: Total amount, in the user's default currency, of recurring activity that has occurred for the given date range.
+          type: number
+        recurring_remaining:
+          description: Total amount, in the user's default currency, of expected recurring activity that has not yet occurred.
+          type: number
+        uncategorized:
+          description: Total amount, in the user's default currency, of non recurring activity coming from un-categorized transactions.
+          type: number
+        uncategorized_count:
+          description: Number of un-categorized transactions for the given date range.
+          type: integer
+        uncategorized_recurring:
+          description: "Total amount, in the user's default currency, of recurring activity coming from un-categorized transactions."
+          type: number
+
+    alignedSummaryCategoryObject:
+      type: object
+      additionalProperties: false
+      x-internal: true # Don't display in schemas section of docs
+      description: "List of each category's budget configuration and activity for the given date range."
+      properties:
+        category_id:
+          description: "ID of the category associated with the totals."
+          type: integer
+        totals:
+          $ref: "#/components/schemas/alignedCategoryTotalsObject"
+        occurrences:
+          type: array
+          items:
+            $ref: "#/components/schemas/summaryCategoryOccurrenceObject"
+      required:
+        - category_id
+        - totals
+
+    nonAlignedSummaryCategoryObject:
+      type: object
+      additionalProperties: false
+      x-internal: true # Don't display in schemas section of docs
+      description: "List of each category's budget configuration and activity for the given date range.<br>
+        Does not include occurrences since the start_date and end_date are not aligned with budget period setting."
+      properties:
+        category_id:
+          description: "ID of the category associated with the totals."
+          type: integer
+        totals:
+          $ref: "#/components/schemas/nonAlignedCategoryTotalsObject"
+      required:
+        - category_id
+        - totals
+    
+    # TODO: Can this be removed?
+    # summaryAutoBudgetObject:
+    #   type: object
+    #   additionalProperties: false
+    #   x-internal: true # Don't display in schemas section of docs
+    #   description: "<mark><strong> ❗ TODO: Suggestions for how to describe this object?</strong></mark>"
+    #   properties:
+    #     type:
+    #       type: string
+    #       enum:
+    #         - nothing
+    #         - fixed
+    #         - budget
+    #         - spend
+    #     amount:
+    #       type: string
+    #       nullable: true
+    #     currency:
+    #       nullable: true
+    #       allOf:
+    #         - $ref: "#/components/schemas/currencyEnum"
+    #   required:
+    #     - type
+
+    # TODO: Can this be removed?
+    # summaryBudgetSettingsObject:
+    #   type: object
+    #   additionalProperties: false
+    #   x-internal: true # Don't display in schemas section of docs
+    #   description: "<mark><strong> ❗ TODO: Suggestions for how to describe this object?</strong></mark>"
+    #   properties:
+    #     group_budget_enabled:
+    #       type: boolean
+    #     rollover_option:
+    #       type: string
+    #       nullable: true
+    #       description: e.g., "same category", "available funds"
+    #     adjustment_date:
+    #       type: string
+    #       format: date
+    #       nullable: true
+    #     all_adjustments:
+    #       type: array
+    #       items:
+    #         $ref: "#/components/schemas/summaryRolloverPoolAdjustmentObject"     
+
+    summaryRolloverPoolAdjustmentObject:
+      type: object
+      additionalProperties: false
+      x-internal: true # Don't display in schemas section of docs
+      description: "The date and adjusted balance of the rollover pool at the time of the adjustment."
+      properties:
+        current:
+          description: "true if this is the current rollover pool balance."
+          type: boolean
+        date:
+          type: string
+          format: date
+        amount:
+          description: "Amount of the rollover pool at the time of the adjustment."
+          type: string
+        currency:
+          description: "Currency of the rollover pool at the time of the adjustment."
+          allOf:
+            - $ref: "#/components/schemas/currencyEnum"
+        to_base:
+          description: "Amount of the rollover pool converted to the user's default currency."
+          type: number
+      required:
+        - current
+        - date
+        - amount
+        - currency
+        - to_base
+
+    alignedCategoryTotalsObject:
+      type: object
+      additionalProperties: false
+      x-internal: true # Don't display in schemas section of docs
+      description: "Total activity for the given category within the given date range which is aligned with budget period setting."
+      properties:
+        other_activity:
+          description: Total non recurring activity, in the user's default currency, for the category within the given date range.<br>
+            The total activity for the category is the sum of this and the recurring_activity.
+          type: number
+        recurring_activity:
+          description: Total recurring activity, in the user's default currency, for the category within the given date range.<br>
+            The total activity for the category is the sum of this and the other_activity.
+          type: number
+        budgeted:
+          description: "Total budgeted amount, in the user's default currency, for the category within the given date range or null if the category is not budgeted."
+          type: number
+          nullable: true
+        available:
+          description: "Total amount of funds available, in the user's default currency, for the category within the given date range."
+          type: number
+          nullable: true
+        recurring_remaining:
+          description: "Total expected recurring activity, in the user's default currency, that has not yet occurred for the category within the given date range."
+          type: number
+        recurring_expected:
+          description: "Total expected recurring activity for the category within the given date range."
+          type: number
+      required:
+        - other_activity
+        - recurring_activity
+        - budgeted
+        - available
+        - recurring_remaining
+        - recurring_expected
+
+    nonAlignedCategoryTotalsObject:
+      type: object
+      additionalProperties: false
+      x-internal: true # Don't display in schemas section of docs
+      description: "Total activity for the given category within the given date range which is not aligned with budget period setting."
+      properties:
+        other_activity:
+          description: Total non recurring activity, in the user's default currency, for the category within the given date range.<br>
+            The total activity for the category is the sum of this and the recurring_activity.
+          type: number
+        recurring_activity:
+          description: Total recurring activity, in the user's default currency, for the category within the given date range.<br>
+            The total activity for the category is the sum of this and the other_activity.
+          type: number
+        recurring_remaining:
+          description: "Total expected recurring activity, in the user's default currency, that has not yet occurred for the category within the given date range."
+          type: number
+        recurring_expected:
+          description: "Total expected recurring activity for the category within the given date range."
+          type: number
+      required:
+        - other_activity
+        - recurring_activity
+        - recurring_remaining
+        - recurring_expected
+
+    summaryCategoryOccurrenceObject:
+      type: object
+      additionalProperties: false
+      x-internal: true # Don't display in schemas section of docs
+      description: "Per period budget activity for the each budget period within the given date range.<br>
+        This is only returned if the query parameter `include_occurrences` is set to `true`."
+      properties:
+        current:
+          description: true if this occurrence is the current budget period.
+          type: boolean
+        start_date:
+          description: The start date of the budget period.
+          type: string
+          format: date
+        end_date:
+          description: The end date of the budget period.
+          type: string
+          format: date
+        other_activity:
+          description: Total non recurring activity, in the user's default currency, for the category within the given date range.
+            The total activity for the category is the sum of this and the recurring_activity.
+          type: number
+        recurring_activity:
+          description: Total recurring activity, in the user's default currency, for the category within the given date range.
+            The total activity for the category is the sum of this and the other_activity.
+          type: number
+        budgeted:
+          description: "Total budgeted amount, in the user's default currency, for the category within the given date range, or null if the category is not budgeted."
+          type: number
+          nullable: true
+        budgeted_amount:
+          description: Total budgeted amount in the budgeted currency for the category within the given date or null if the category is not budgeted.
+          type: string
+          nullable: true
+        budgeted_currency:
+          description: Currency of the budgeted amount.
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/currencyEnum"
+        notes:
+          description: "Any notes added in the Web UI for the budget period."
+          type: string
+          nullable: true
+      required:
+        - current
+        - start_date
+        - end_date
+        - other_activity
+        - recurring_activity
+        - budgeted
+        - budgeted_amount
+        - budgeted_currency
+        - notes
+
+    summaryRecurringTransactionObject:
+      type: object
+      additionalProperties: false
+      x-internal: true # Don't display in schemas section of docs
+      description: "A single transaction associated with a recurring item. I don't think we will expose this in the summary since it's gettable by querying the recurring_id"
+      properties:
+        date:
+          type: string
+          format: date
+        category_id:
+          type: integer
+        payee:
+          type: string
+        to_base:
+          type: number
+        amount:
+          type: string
+        currency:
+          allOf:
+            - $ref: "#/components/schemas/currencyEnum"
+      required:
+        - date
+        - category_id
+        - payee
+        - to_base
+        - amount
+        - currency
+
+    summaryRolloverPoolObject:
+      type: object
+      additionalProperties: false
+      x-internal: true # Don't display in schemas section of docs
+      description: "Summary of the current rollover pool balance and all previous adjustments.<br>
+        Only present if the `include_rollover_pool` query parameter is set to `true`."
+      properties:
+        budgeted_to_base:
+          description: "Amount of funds, in the user's default currency, currently available to rollover."
+          type: number
+        all_adjustments:
+          description: List of previous adjustments to the rollover pool.
+          type: array
+          items:
+            $ref: "#/components/schemas/summaryRolloverPoolAdjustmentObject"
+      required:
+        - budgeted_to_base
+        - all_adjustments
+
+
   # These responses are defined primarily to provide examples in the docs
   responses:
     unauthorizedToken:
@@ -2668,13 +3043,15 @@ components:
     bearerSecurity:
       type: http
       # TODO Make this shorter?
-      description: The Lunch Money API uses API keys to authenticate requests. To use
-        the v1 API you can view and manage your API keys on the [developers page
-        in the Lunch Money app](https://my.lunchmoney.app/developers). <p> To
-        interact with the Static Mock Server simply enter an API key of 11
-        characters or more. <p> To interact with the v2 service implemented on
-        top of the v1 API paste in a real API token associated with a Lunch
-        Money Budget.
+      # description: The Lunch Money API uses API keys to authenticate requests. To use
+      #   the v1 API you can view and manage your API keys on the [developers page
+      #   in the Lunch Money app](https://my.lunchmoney.app/developers). <p> To
+      #   interact with the Static Mock Server simply enter an API key of 11
+      #   characters or more. <p> To interact with the v2 service implemented on
+      #   top of the v1 API paste in a real API token associated with a Lunch
+      #   Money Budget.
+      description: To interact with the Static Mock Server simply enter an API key of 11
+        characters or more.
       scheme: bearer
       bearerFormat: JWT
     cookieAuth:
@@ -2708,6 +3085,392 @@ paths:
                 primary_currency: usd
                 api_key_label: Side project dev key
                 debits_as_negative: false
+        "401":
+          $ref: "#/components/responses/unauthorizedToken"
+        "429":
+          $ref: "#/components/responses/rateLimited"
+        "500":
+          $ref: "#/components/responses/serverError"
+  /summary:
+    get:
+      tags:
+        - summary
+      summary: Get summary
+      description: Returns a summary of the budget activity for the specified date range.
+      operationId: getBudgetSummary
+      parameters:
+        - in: query
+          name: start_date
+          description: Start of date range in ISO 8601 date format (YYYY-MM-DD).
+          required: true
+          schema:
+            type: string
+            format: date
+          examples:
+            "aligned monthly":
+              summary: "Start date for monthly budget period"
+              description: "First day of month for aligned budget periods"
+              value: "2025-07-01"
+            "not aligned":
+              summary: "Start date for non-aligned period"
+              description: "Date that doesn't align with budget periods"
+              value: "2025-07-02"
+        - in: query
+          name: end_date
+          description: "End of date range in ISO 8601 date format (YYYY-MM-DD)."
+          required: true
+          schema:
+            type: string
+            format: date
+          examples:
+            "aligned monthly":
+              summary: "End date for monthly budget period"
+              description: "Last day of month for aligned budget periods"
+              value: "2025-08-31"
+            "not aligned":
+              summary: "End date for non-aligned period"
+              description: "Date that doesn't align with budget periods"
+              value: "2025-08-27"
+        - in: query
+          name: include_exclude_from_budgets
+          description: Enable to include categories that have the 'Exclude from Budgets' flag set in the returned `categories` array.
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - in: query
+          name: include_occurrences
+          description: Enable to include an `occurrences` array for each category in an aligned response. Each array will include an object for each budget period that falls within the specified date range which includes details on the activity for the budget period.
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - in: query
+          name: include_totals
+          description: "Enable to include a top-level `totals` section that summarizes the inflow and outflow across all transactions for the specified date range."
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: Budget summary for the requested range.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/alignedSummaryResponseObject"
+                  - $ref: "#/components/schemas/nonAlignedSummaryResponseObject"
+              examples:
+                "aligned monthly":
+                  summary: "Monthly budget summary aligned with budget periods"
+                  description: "Example response for a date range that aligns with monthly budget periods (1st to last day of month) with occurrences included"
+                  value:
+                    aligned: true
+                    categories:
+                      - category_id: 315177
+                        totals:
+                          other_activity: 156.64
+                          recurring_activity: 0
+                          budgeted: 500
+                          available: 343.36
+                          recurring_remaining: 0
+                          recurring_expected: 0
+                        occurrences:
+                          - current: false
+                            start_date: "2025-07-01"
+                            end_date: "2025-07-31"
+                            other_activity: 156.64
+                            recurring_activity: 0
+                            budgeted: 500
+                            budgeted_amount: "500.0000"
+                            budgeted_currency: "usd"
+                            notes: "Monthly budget allocation"
+                          - current: false
+                            start_date: "2025-08-01"
+                            end_date: "2025-08-31"
+                            other_activity: 0
+                            recurring_activity: 0
+                            budgeted: 500
+                            budgeted_amount: "500.0000"
+                            budgeted_currency: "usd"
+                            notes: "Adjusted for seasonal spending"
+                      - category_id: 315628
+                        totals:
+                          other_activity: 424.8
+                          recurring_activity: 0
+                          budgeted: 200
+                          available: -224.8
+                          recurring_remaining: 0
+                          recurring_expected: 0
+                        occurrences:
+                          - current: false
+                            start_date: "2025-07-01"
+                            end_date: "2025-07-31"
+                            other_activity: 424.8
+                            recurring_activity: 0
+                            budgeted: 200
+                            budgeted_amount: "200.0000"
+                            budgeted_currency: "usd"
+                            notes: "Based on previous month's activity"
+                          - current: false
+                            start_date: "2025-08-01"
+                            end_date: "2025-08-31"
+                            other_activity: 0
+                            recurring_activity: 0
+                            budgeted: 200
+                            budgeted_amount: "200.0000"
+                            budgeted_currency: "usd"
+                            notes: "Emergency fund contribution"
+                      - category_id: 86
+                        totals:
+                          other_activity: 25.69
+                          recurring_activity: 0
+                          budgeted: 200
+                          available: 174.31
+                          recurring_remaining: 0
+                          recurring_expected: 0
+                        occurrences:
+                          - current: false
+                            start_date: "2025-07-01"
+                            end_date: "2025-07-31"
+                            other_activity: 25.69
+                            recurring_activity: 0
+                            budgeted: 200
+                            budgeted_amount: "200.0000"
+                            budgeted_currency: "usd"
+                            notes: "Holiday spending budget"
+                          - current: false
+                            start_date: "2025-08-01"
+                            end_date: "2025-08-31"
+                            other_activity: 0
+                            recurring_activity: 0
+                            budgeted: 200
+                            budgeted_amount: "200.0000"
+                            budgeted_currency: "usd"
+                            notes: "Summer vacation savings"
+                "not aligned":
+                  summary: "Budget summary for non-aligned date range"
+                  description: "Example response for a date range that does not align with monthly budget periods (July 2 to August 27)"
+                  value:
+                    aligned: false
+                    categories:
+                      - category_id: 315177
+                        totals:
+                          other_activity: 156.64
+                          recurring_activity: 0
+                          budgeted: 400
+                          available: 243.36
+                          recurring_remaining: 0
+                          recurring_expected: 0
+                      - category_id: 315628
+                        totals:
+                          other_activity: 424.8
+                          recurring_activity: 0
+                          budgeted: null
+                          available: null
+                          recurring_remaining: 0
+                          recurring_expected: 0
+                      - category_id: 78
+                        totals:
+                          other_activity: 0
+                          recurring_activity: 0
+                          budgeted: null
+                          available: null
+                          recurring_remaining: 0
+                          recurring_expected: 0
+                      - category_id: 83
+                        totals:
+                          other_activity: 0
+                          recurring_activity: 0
+                          budgeted: null
+                          available: null
+                          recurring_remaining: 1700
+                          recurring_expected: 1700
+                      - category_id: 88
+                        totals:
+                          other_activity: 0
+                          recurring_activity: 2501.68
+                          budgeted: null
+                          available: null
+                          recurring_remaining: 0
+                          recurring_expected: 2501.68
+                      - category_id: 86
+                        totals:
+                          other_activity: 25.69
+                          recurring_activity: 0
+                          budgeted: 200
+                          available: 174.31
+                          recurring_remaining: 0
+                          recurring_expected: 0
+                      - category_id: 84
+                        totals:
+                          other_activity: 401.12
+                          recurring_activity: 4.13
+                          budgeted: 150
+                          available: -255.25
+                          recurring_remaining: -4.13
+                          recurring_expected: 0
+                "summarized totals":
+                  summary: "Monthly budget summary with totals included"
+                  description: "Example response for aligned monthly budget periods with totals section showing overall inflow and outflow"
+                  value:
+                    aligned: true
+                    categories:
+                      - category_id: 315177
+                        totals:
+                          other_activity: 156.64
+                          recurring_activity: 0
+                          budgeted: 400
+                          available: 243.36
+                          recurring_remaining: 0
+                          recurring_expected: 0
+                        occurrences:
+                          - current: false
+                            start_date: "2025-07-01"
+                            end_date: "2025-07-31"
+                            other_activity: 156.64
+                            recurring_activity: 0
+                            budgeted: 400
+                            budgeted_amount: "400.0000"
+                            budgeted_currency: "usd"
+                            notes: "Monthly budget allocation"
+                      - category_id: 315628
+                        totals:
+                          other_activity: 424.8
+                          recurring_activity: 0
+                          budgeted: 200
+                          available: -224.8
+                          recurring_remaining: 0
+                          recurring_expected: 0
+                        occurrences:
+                          - current: false
+                            start_date: "2025-07-01"
+                            end_date: "2025-07-31"
+                            other_activity: 424.8
+                            recurring_activity: 0
+                            budgeted: 200
+                            budgeted_amount: "200.0000"
+                            budgeted_currency: "usd"
+                            notes: "Based on previous month's activity"
+                      - category_id: 315629
+                        totals:
+                          other_activity: 0
+                          recurring_activity: 0
+                          budgeted: 150
+                          available: 150
+                          recurring_remaining: 0
+                          recurring_expected: 0
+                        occurrences:
+                          - current: false
+                            start_date: "2025-07-01"
+                            end_date: "2025-07-31"
+                            other_activity: 0
+                            recurring_activity: 0
+                            budgeted: 150
+                            budgeted_amount: "150.0000"
+                            budgeted_currency: "usd"
+                            notes: "Emergency fund contribution"
+                    totals:
+                      inflow:
+                        other_activity: -125.50
+                        recurring_activity: -89.99
+                        uncategorized: 0
+                        uncategorized_count: 0
+                        uncategorized_recurring: 0
+                      outflow:
+                        other_activity: 581.44
+                        recurring_activity: 0
+                        uncategorized: 45.20
+                        uncategorized_count: 3
+                        uncategorized_recurring: 0
+                "with occurrences":
+                  summary: "Monthly budget summary with occurrences included"
+                  description: "Example response for aligned monthly budget periods with occurrences showing individual budget period details for each category"
+                  value:
+                    aligned: true
+                    categories:
+                      - category_id: 315177
+                        totals:
+                          other_activity: 156.64
+                          recurring_activity: 0
+                          budgeted: 500
+                          available: 343.36
+                          recurring_remaining: 0
+                          recurring_expected: 0
+                        occurrences:
+                          - current: false
+                            start_date: "2025-07-01"
+                            end_date: "2025-07-31"
+                            other_activity: 156.64
+                            recurring_activity: 0
+                            budgeted: 500
+                            budgeted_amount: "500.0000"
+                            budgeted_currency: "usd"
+                            notes: "Monthly budget allocation"
+                          - current: false
+                            start_date: "2025-08-01"
+                            end_date: "2025-08-31"
+                            other_activity: 0
+                            recurring_activity: 0
+                            budgeted: 500
+                            budgeted_amount: "500.0000"
+                            budgeted_currency: "usd"
+                            notes: "Adjusted for seasonal spending"
+                      - category_id: 315628
+                        totals:
+                          other_activity: 424.8
+                          recurring_activity: 0
+                          budgeted: 200
+                          available: -224.8
+                          recurring_remaining: 0
+                          recurring_expected: 0
+                        occurrences:
+                          - current: false
+                            start_date: "2025-07-01"
+                            end_date: "2025-07-31"
+                            other_activity: 424.8
+                            recurring_activity: 0
+                            budgeted: 200
+                            budgeted_amount: "200.0000"
+                            budgeted_currency: "usd"
+                            notes: "Based on previous month's activity"
+                          - current: false
+                            start_date: "2025-08-01"
+                            end_date: "2025-08-31"
+                            other_activity: 0
+                            recurring_activity: 0
+                            budgeted: 200
+                            budgeted_amount: "200.0000"
+                            budgeted_currency: "usd"
+                            notes: "Emergency fund contribution"
+                      - category_id: 86
+                        totals:
+                          other_activity: 25.69
+                          recurring_activity: 0
+                          budgeted: 200
+                          available: 174.31
+                          recurring_remaining: 0
+                          recurring_expected: 0
+                        occurrences:
+                          - current: false
+                            start_date: "2025-07-01"
+                            end_date: "2025-07-31"
+                            other_activity: 25.69
+                            recurring_activity: 0
+                            budgeted: 200
+                            budgeted_amount: "200.0000"
+                            budgeted_currency: "usd"
+                            notes: "Holiday spending budget"
+                          - current: false
+                            start_date: "2025-08-01"
+                            end_date: "2025-08-31"
+                            other_activity: 0
+                            recurring_activity: 0
+                            budgeted: 200
+                            budgeted_amount: "200.0000"
+                            budgeted_currency: "usd"
+                            notes: "Summer vacation savings"
         "401":
           $ref: "#/components/responses/unauthorizedToken"
         "429":
@@ -3063,6 +3826,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int32
           examples:
             category:
               summary: Example of a category's id
@@ -3195,6 +3959,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int32
           examples:
             category:
               summary: Example of a category's id
@@ -3343,6 +4108,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int32
           examples:
             delete category:
               summary: Simple category delete
@@ -3485,7 +4251,7 @@ paths:
       tags:
         - manual_accounts
       summary: Create a manual account
-      description: Create a new manually-managed account.
+      description: Create a new manually-managed account.<br><br>
       operationId: createManualAccount
       requestBody:
         required: true
@@ -3513,6 +4279,20 @@ paths:
                   currency: usd
                   institution_name: Bank of America
                   exclude_from_transactions: false
+              display_name not unique:
+                summary: Explicit display_name not unique
+                value:
+                    name: API created card
+                    type: credit
+                    display_name: WeBank Euro Travel Card
+                    balance: "1004.8000"
+              implicit display_name not unique:
+                summary: Derived display_name not unique
+                value:
+                  name: Individual Brokerage
+                  type: investment
+                  institution_name: Fidelity
+                  balance: "41211.8000"
       responses:
         "201":
           description: Successfully created manual account
@@ -3561,15 +4341,34 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponseObject"
-              example:
-                message: Request Validation Failure
-                errors:
-                  - errMsg: must have required property 'name'
-                    instancePath: /requestBody
-                    schemaPath: "#/properties/requestBody/required"
-                    keyword: required
-                    params:
-                      missingProperty: name
+              examples:
+                missing required properties:
+                  value:
+                    message: Request Validation Failure
+                    errors:
+                      - errMsg: "Missing required property 'name' in request body."
+                      - errMsg: "Missing required property 'type' in request body."
+                      - errMsg: "Missing required property 'balance' in request body."
+                explicit display_name not unique:
+                  value:
+                    message: Request Validation Failure
+                    errors:
+                      - errMsg: "A manual account with the same display_name: 'WeBank Travel Card' already exists."
+                        existing_manual_account_id: 219909
+                        requested_display_name: "WeBank Travel Card"
+                        existing_display_name: "WeBank Travel Card"
+                        existing_name: "Euro Travel Card"
+                        requested_name: "API created card"
+                implicit display_name not unique:
+                  value:
+                    message: Request Validation Failure
+                    errors:
+                      - errMsg: "A manual account with the same implicit display_name derived from name: 'Individual Brokerage' and institution_name: 'Fidelity' already exists."
+                        existing_manual_account_id: 219807
+                        requested_name: Individual Brokerage
+                        existing_name: Individual Brokerage
+                        requested_institution_name: Fidelity
+                        existing_institution_name: Fidelity
         "401":
           $ref: "#/components/responses/unauthorizedToken"
         "429":
@@ -3590,6 +4389,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int32
           examples:
             basic manual account:
               summary: Basic manual account by id request
@@ -3626,15 +4426,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponseObject"
-              example:
-                message: Request Validation Failure
-                errors:
-                  - errMsg: must be integer
-                    instancePath: /path/id
-                    schemaPath: "#/properties/path/properties/ids/items/type"
-                    keyword: type
-                    params:
-                      type: integer
+              examples:
+                invalid account id type:
+                  value:
+                    message: Invalid Path Parameters
+                    errors:
+                      - errMsg: "Invalid value type for path parameter: 'id'. Expected 'number', received 'string'."
         "401":
           $ref: "#/components/responses/unauthorizedToken"
         "404":
@@ -3674,6 +4471,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int32
           examples:
             category:
               summary: Example of a manual account's id
@@ -3761,13 +4559,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorResponseObject"
-              example:
-                message: Invalid Request Body
-                errors:
-                  - errMsg: "A request to update a manual account must include at least one of the
-                      following properties: name, type, subtype, display_name,
-                      balance, balance_as_of, closed_on, currency,
-                      institution_name, exclude_from_transactions"
+              examples:
+                missing required properties:
+                  value:
+                    message: Invalid Request Body
+                    errors:
+                      - errMsg: "A request to update a manual account must include at least one of the
+                          following properties: name, type, subtype, display_name,
+                          balance, balance_as_of, closed_on, currency,
+                          institution_name, exclude_from_transactions"
+                duplicate display_name: 
+                  value:
+                    message: Request Validation Failure
+                    errors:
+                      - errMsg: "A manual account with the same display_name: 'WeBank Travel Card' already exists."
+                        existing_manual_account_id: 219909
+                        requested_display_name: "WeBank Travel Card"
+                        existing_display_name: "WeBank Travel Card"
+                        existing_name: "Euro Travel Card"
+                        requested_name: "API created card"
         "401":
           $ref: "#/components/responses/unauthorizedToken"
         "404":
@@ -3800,6 +4610,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int32
           examples:
             delete manual account:
               summary: Account ID to delete
@@ -3940,6 +4751,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int32
           examples:
             basic manual account:
               summary: Basic plaid account by id request
@@ -4049,6 +4861,7 @@ paths:
             will trigger a fetch for all eligible accounts.
           schema:
             type: integer
+            format: int32
           examples:
             basic manual account:
               summary: Basic manual account by id request
@@ -4134,7 +4947,7 @@ paths:
           in: query
           schema:
             type: integer
-            format: int64
+            format: int32
           description: Filter transactions to those associated with specified manual
             account ID or set this to 0 to omit any transactions from manual
             accounts. Setting both this and `synched_account_id` to 0 will
@@ -4149,7 +4962,7 @@ paths:
           in: query
           schema:
             type: integer
-            format: int64
+            format: int32
           description: Filter transactions to those associated with specified plaid
             account ID or set this to 0 to omit any transactions from plaid
             accounts. Setting both this and `manual_account_id` to 0 will return
@@ -4164,7 +4977,7 @@ paths:
           in: query
           schema:
             type: integer
-            format: int64
+            format: int32
           description: >
             Filter transactions to those associated with specified
             Recurring  Item ID
@@ -4177,7 +4990,7 @@ paths:
           in: query
           schema:
             type: integer
-            format: int64
+            format: int32
           description: Filter transactions to those associated with the specified category
             ID. Will also match category groups.  Set this to 0 to return only
             un-categorized transactions
@@ -4186,6 +4999,13 @@ paths:
               value: 83
             food category group:
               value: 84
+        - name: tag_id
+          in: query
+          schema:
+            type: integer
+            format: int32
+          description: Filter transactions to those that have a tag with the specified Tag
+            ID
         - name: is_group
           in: query
           schema:
@@ -4199,35 +5019,42 @@ paths:
               - reviewed
               - unreviewed
               - delete_pending
-              - pending
           description: "Filter transactions to those with the specified status:<br> -
             `reviewed`: Only user reviewed transactions or those that were
             automatically marked as reviewed due to reviewed recurring_item
             logic<br> - `unreviewed`: Only transactions that need to be
             reviewed<br> - `delete_pending`: Only transactions that require
             manual intervention because the plaid account deleted this
-            transaction after it was updated by the user. <br> - `pending`: Only
-            pending transactions from synced accounts. "
+            transaction after it was updated by the user."
           examples:
             needs review:
               value: unreviewed
             needs deletion:
               value: delete_pending
-        - name: tag_id
+        - name: is_pending
           in: query
           schema:
-            type: integer
-            format: int64
-          description: Filter transactions to those that have a tag with the specified Tag
-            ID
+            type: boolean
+          description: >
+            Filter transactions by pending status. Set to `true` to return only pending transactions,
+            or `false` to return only non-pending transactions. When this parameter is set, it takes
+            precedence over `include_pending`. Note: Pending transactions always have a status of
+            `unreviewed`, so when setting this parameter to `true`, either omit the `status` parameter
+            or set it to `unreviewed`.
+          examples:
+            only pending:
+              value: true
+            exclude pending:
+              value: false
         - name: include_pending
           in: query
           schema:
             type: boolean
             default: false
-          description: Set to true if you'd like to include imported transactions with a
-            pending status. This query param is ignored if the `status` query
-            param is also set.
+          description: >
+            By default, pending transactions are excluded from results. Set to `true` to include
+            imported transactions with a pending status in the results. This query param is ignored
+            if the `is_pending` query param is also set.
         - name: include_metadata
           in: query
           schema:
@@ -5467,6 +6294,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
           examples:
             basic transaction:
               summary: Basic transaction by id request
@@ -5705,6 +6533,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
           examples:
             basic transaction:
               summary: Basic transaction by id request
@@ -5838,6 +6667,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
           examples:
             delete transaction:
               summary: Simple transaction delete
@@ -5920,6 +6750,7 @@ paths:
                     already grouped must be ungrouped before being regrouped.
                   items:
                     type: integer
+                    format: int64
                 date:
                   type: string
                   format: date
@@ -5980,82 +6811,77 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  transactions:
-                    items:
-                      $ref: "#/components/schemas/transactionObject"
-                    type: array
+                $ref: "#/components/schemas/transactionObject"
               examples:
                 group inherits category:
                   value:
-                    transactions:
-                      - id: 123456789
-                        date: "2024-12-10"
-                        amount: "375.0000"
+                    id: 123456789
+                    date: "2024-12-10"
+                    amount: "375.0000"
+                    currency: usd
+                    to_base: 375
+                    recurring_id: null
+                    payee: Home Entertainment Transactions
+                    category_id: 315628
+                    notes: null
+                    status: reviewed
+                    is_pending: false
+                    created_at: "2024-12-18T14:45:03.366Z"
+                    updated_at: "2024-12-18T14:45:03.366Z"
+                    parent_id: null
+                    is_group: true
+                    group_id: null
+                    manual_account_id: null
+                    plaid_account_id: null
+                    tag_ids: []
+                    source: api
+                    external_id: null
+                    custom_metadata: null
+                    children:
+                      - id: 2112140365
+                        date: "2024-11-10"
+                        amount: "75.00"
                         currency: usd
-                        to_base: 375
+                        to_base: 75
                         recurring_id: null
-                        payee: Home Entertainment Transactions
+                        payee: Target
                         category_id: 315628
-                        notes: null
+                        notes: Household items
                         status: reviewed
                         is_pending: false
-                        created_at: "2024-12-18T14:45:03.366Z"
-                        updated_at: "2024-12-18T14:45:03.366Z"
+                        created_at: "2024-11-10T17:00:06.192Z"
+                        updated_at: "2024-11-10T17:00:06.733Z"
+                        is_parent: false
                         parent_id: null
-                        is_group: true
-                        group_id: null
+                        is_group: false
+                        group_id: 123456789
                         manual_account_id: null
-                        plaid_account_id: null
+                        plaid_account_id: 119809
                         tag_ids: []
-                        source: api
+                        source: plaid
                         external_id: null
-                        custom_metadata: null
-                        children:
-                          - id: 2112140365
-                            date: "2024-11-10"
-                            amount: "75.00"
-                            currency: usd
-                            to_base: 75
-                            recurring_id: null
-                            payee: Target
-                            category_id: 315628
-                            notes: Household items
-                            status: reviewed
-                            is_pending: false
-                            created_at: "2024-11-10T17:00:06.192Z"
-                            updated_at: "2024-11-10T17:00:06.733Z"
-                            is_parent: false
-                            parent_id: null
-                            is_group: false
-                            group_id: 123456789
-                            manual_account_id: null
-                            plaid_account_id: 119809
-                            tag_ids: []
-                            source: plaid
-                            external_id: null
-                          - id: 2112140361
-                            date: "2024-11-09"
-                            amount: "300.00"
-                            currency: usd
-                            to_base: 300
-                            recurring_id: null
-                            payee: Best Buy
-                            category_id: 315628
-                            notes: Electronics
-                            status: reviewed
-                            is_pending: false
-                            created_at: "2024-11-09T17:00:06.192Z"
-                            updated_at: "2024-11-09T17:00:06.733Z"
-                            is_parent: false
-                            parent_id: null
-                            is_group: false
-                            group_id: 123456789
-                            manual_account_id: null
-                            plaid_account_id: 119810
-                            tag_ids: []
-                            source: plaid
-                            external_id: null
+                      - id: 2112140361
+                        date: "2024-11-09"
+                        amount: "300.00"
+                        currency: usd
+                        to_base: 300
+                        recurring_id: null
+                        payee: Best Buy
+                        category_id: 315628
+                        notes: Electronics
+                        status: reviewed
+                        is_pending: false
+                        created_at: "2024-11-09T17:00:06.192Z"
+                        updated_at: "2024-11-09T17:00:06.733Z"
+                        is_parent: false
+                        parent_id: null
+                        is_group: false
+                        group_id: 123456789
+                        manual_account_id: null
+                        plaid_account_id: 119810
+                        tag_ids: []
+                        source: plaid
+                        external_id: null
         "400":
           description: Bad Request
           content:
@@ -6108,6 +6934,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
           examples:
             delete transaction group:
               summary: Simple transaction group delete
@@ -6160,6 +6987,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
           examples:
             spit transaction:
               summary: Basic transaction by id request
@@ -6209,30 +7037,48 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  transactions:
-                    items:
-                      $ref: "#/components/schemas/transactionObject"
-                    type: array
+                $ref: "#/components/schemas/transactionObject"
               examples:
                 split 88.45 Transaction:
                   value:
-                    transactions:
-                      - id: 2112150650
+                    id: 2112150650
+                    date: "2024-10-19"
+                    amount: "88.4500"
+                    currency: usd
+                    to_base: 88.45
+                    recurring_id: null
+                    payee: Food Town
+                    category_id: 315162
+                    notes: null
+                    status: reviewed
+                    is_pending: false
+                    created_at: "2024-10-19T17:00:06.192Z"
+                    updated_at: "2024-11-30T22:25:53.232Z"
+                    parent_id: null
+                    is_parent: true
+                    is_group: false
+                    group_id: null
+                    manual_account_id: null
+                    plaid_account_id: 119805
+                    tag_ids: []
+                    source: plaid
+                    external_id: null
+                    children:
+                      - id: 2112150750
                         date: "2024-10-19"
-                        amount: "88.4500"
+                        amount: "44.2300"
                         currency: usd
-                        to_base: 88.45
+                        to_base: 44.23
                         recurring_id: null
-                        payee: Food Town
+                        payee: Food Town - Lenny
                         category_id: 315162
                         notes: null
                         status: reviewed
                         is_pending: false
-                        created_at: "2024-10-19T17:00:06.192Z"
+                        created_at: "2024-11-30T22:25:53.232Z"
                         updated_at: "2024-11-30T22:25:53.232Z"
+                        is_parent: false
                         parent_id: null
-                        is_parent: true
                         is_group: false
                         group_id: null
                         manual_account_id: null
@@ -6240,51 +7086,28 @@ paths:
                         tag_ids: []
                         source: plaid
                         external_id: null
-                        children:
-                          - id: 2112150750
-                            date: "2024-10-19"
-                            amount: "44.2300"
-                            currency: usd
-                            to_base: 44.23
-                            recurring_id: null
-                            payee: Food Town - Lenny
-                            category_id: 315162
-                            notes: null
-                            status: reviewed
-                            is_pending: false
-                            created_at: "2024-11-30T22:25:53.232Z"
-                            updated_at: "2024-11-30T22:25:53.232Z"
-                            is_parent: false
-                            parent_id: null
-                            is_group: false
-                            group_id: null
-                            manual_account_id: null
-                            plaid_account_id: 119805
-                            tag_ids: []
-                            source: plaid
-                            external_id: null
-                          - id: 2112150751
-                            date: "2024-10-19"
-                            amount: "44.2200"
-                            currency: usd
-                            to_base: 44.22
-                            recurring_id: null
-                            payee: Food Town - Penny
-                            category_id: 315162
-                            notes: null
-                            status: reviewed
-                            is_pending: false
-                            created_at: "2024-11-30T22:25:53.232Z"
-                            updated_at: "2024-11-30T22:25:53.232Z"
-                            is_parent: false
-                            parent_id: null
-                            is_group: false
-                            group_id: null
-                            manual_account_id: null
-                            plaid_account_id: 119805
-                            tag_ids: []
-                            source: plaid
-                            external_id: null
+                      - id: 2112150751
+                        date: "2024-10-19"
+                        amount: "44.2200"
+                        currency: usd
+                        to_base: 44.22
+                        recurring_id: null
+                        payee: Food Town - Penny
+                        category_id: 315162
+                        notes: null
+                        status: reviewed
+                        is_pending: false
+                        created_at: "2024-11-30T22:25:53.232Z"
+                        updated_at: "2024-11-30T22:25:53.232Z"
+                        is_parent: false
+                        parent_id: null
+                        is_group: false
+                        group_id: null
+                        manual_account_id: null
+                        plaid_account_id: 119805
+                        tag_ids: []
+                        source: plaid
+                        external_id: null
         "400":
           description: Bad Request
           content:
@@ -6337,6 +7160,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
           examples:
             unsplit a transaction:
               value: 2112140459
@@ -6382,6 +7206,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
             description: The ID of the transaction to attach the file to
           examples:
             attach file to transaction:
@@ -6403,16 +7228,7 @@ paths:
                   type: string
                   format: binary
                   description: |
-                    The file to attach. 
-                    
-                    Supported file types:
-                    - image/jpeg
-                    - image/png
-                    - application/pdf
-                    - image/heic
-                    - image/heif
-                    
-                    Maximum file size: 10MB
+                    The file to attach via multipart form encoding.  File size may not exceed 10MB.
                 notes:
                   type: string
                   description: Optional notes about the file
@@ -6469,6 +7285,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int32
             description: The ID of the file attachment to download
           examples:
             existing file attachment id:
@@ -6523,6 +7340,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int32
             description: The ID of the file attachment to delete
           examples:
             existing file attachment id:
@@ -6689,6 +7507,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int32
           examples:
             tag:
               summary: Example of a tags's id
@@ -6765,6 +7584,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int32
           examples:
             tag:
               summary: Example of a tags's id
@@ -6861,6 +7681,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int32
           examples:
             delete tag:
               summary: Simple tag delete
@@ -6908,10 +7729,10 @@ paths:
           $ref: "#/components/responses/rateLimited"
         "500":
           $ref: "#/components/responses/serverError"
-  /recurring:
+  /recurring_items:
     get:
       tags:
-        - recurring
+        - recurring_items
       summary: Get a all recurring items
       description: Get info about the recurring items for a specified time frame
       operationId: getAllRecurring
@@ -6951,70 +7772,71 @@ paths:
                     items:
                       $ref: "#/components/schemas/recurringObject"
               example:
-                recurring:
-                  - id: 994069
-                    description: Income
-                    status: reviewed
-                    transaction_criteria:
-                      start_date: "2024-09-01"
-                      end_date: "2024-10-31"
-                      anchor_date: "2024-09-14"
-                      granularity: month
-                      quantity: 1
-                      payee: Penny Lane
-                      amount: "1250.8400"
-                      currency: usd
-                      plaid_account_id: 119806
-                      manual_account_id: null
-                    overrides:
-                      payee: Paycheck
-                      category_id: 88
-                    matches:
-                      request_start_date: "2024-10-01"
-                      request_end_date: "2024-10-31"
-                      expected_occurrence_dates:
-                        - "2024-10-14"
-                        - "2024-10-28"
-                      found_transactions:
-                        - date: "2024-10-14"
-                          transaction_id: 2212150658
-                      missing_transaction_dates:
-                        - "2024-10-28"
-                    created_by: 18328
-                    created_at: "2024-07-28T01:01:38.716Z"
-                    updated_at: "2024-07-28T01:01:38.716Z"
-                    source: manual
-                  - id: 994079
-                    description: Monthly rent payable to Mrs Smith
-                    status: reviewed
-                    transaction_criteria:
-                      start_date: "2024-09-01"
-                      end_date: "2024-10-31"
-                      anchor_date: "2024-09-01"
-                      granularity: month
-                      quantity: 1
-                      payee: '[No Payee]'
-                      amount: "850.0000"
-                      currency: usd
-                      plaid_account_id: 119806
-                      manual_account_id: null
-                    overrides:
-                      payee: Rent
-                      notes: Monthly rent payable to Mrs Smith
-                      category_id: 83
-                    matches:
-                      request_start_date: "2024-10-01"
-                      request_end_date: "2024-10-31"
-                      expected_occurrence_dates:
-                        - "2024-10-01"
-                      found_transactions:
-                        - date: "2024-10-01"
-                          transaction_id: 2212150656
-                      missing_transaction_dates: []
-                    created_by: 18328
-                    created_at: "2025-06-28T01:01:38.195Z"
-                    updated_at: "2025-06-28T01:01:38.195Z"
-                    source: manual
+                recurring_items:
+                  recurring_items:
+                    - id: 994069
+                      description: Income
+                      status: reviewed
+                      transaction_criteria:
+                        start_date: "2024-09-01"
+                        end_date: "2024-10-31"
+                        anchor_date: "2024-09-14"
+                        granularity: month
+                        quantity: 1
+                        payee: Penny Lane
+                        amount: "1250.8400"
+                        currency: usd
+                        plaid_account_id: 119806
+                        manual_account_id: null
+                      overrides:
+                        payee: Paycheck
+                        category_id: 88
+                      matches:
+                        request_start_date: "2024-10-01"
+                        request_end_date: "2024-10-31"
+                        expected_occurrence_dates:
+                          - "2024-10-14"
+                          - "2024-10-28"
+                        found_transactions:
+                          - date: "2024-10-14"
+                            transaction_id: 2212150658
+                        missing_transaction_dates:
+                          - "2024-10-28"
+                      created_by: 18328
+                      created_at: "2024-07-28T01:01:38.716Z"
+                      updated_at: "2024-07-28T01:01:38.716Z"
+                      source: manual
+                    - id: 994079
+                      description: Monthly rent payable to Mrs Smith
+                      status: reviewed
+                      transaction_criteria:
+                        start_date: "2024-09-01"
+                        end_date: "2024-10-31"
+                        anchor_date: "2024-09-01"
+                        granularity: month
+                        quantity: 1
+                        payee: '[No Payee]'
+                        amount: "850.0000"
+                        currency: usd
+                        plaid_account_id: 119806
+                        manual_account_id: null
+                      overrides:
+                        payee: Rent
+                        notes: Monthly rent payable to Mrs Smith
+                        category_id: 83
+                      matches:
+                        request_start_date: "2024-10-01"
+                        request_end_date: "2024-10-31"
+                        expected_occurrence_dates:
+                          - "2024-10-01"
+                        found_transactions:
+                          - date: "2024-10-01"
+                            transaction_id: 2212150656
+                        missing_transaction_dates: []
+                      created_by: 18328
+                      created_at: "2025-06-28T01:01:38.195Z"
+                      updated_at: "2025-06-28T01:01:38.195Z"
+                      source: manual
         "400":
           description: Bad Request
           content:
@@ -7046,10 +7868,10 @@ paths:
           $ref: "#/components/responses/rateLimited"
         "500":
           $ref: "#/components/responses/serverError"
-  /recurring/{id}:
+  /recurring_items/{id}:
     get:
       tags:
-        - recurring
+        - recurring_items
       summary: Get a single recurring item
       description: Retrieve the details of a specific recurring item with the specified ID.
       operationId: getRecurringById
@@ -7060,6 +7882,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int32
           examples:
             tag:
               summary: Example of a recurring ID

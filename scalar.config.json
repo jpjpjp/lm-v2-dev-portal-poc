@@ -134,14 +134,26 @@
           "type": "folder",
           "children": [
             {
+              "name": "API v2 Overview and Comparison to v1",
+              "description": "API v2 Overview and Comparison to v1",
+              "path": "api/v2/lunch-money-api-changelog.md",
+              "type": "page"
+            },
+            {
+              "name": "API v1 vs v2 Object Visual Comparison",
+              "description": "API v1 vs v2 Object Visual Comparison",
+              "path": "api/v2/changelog-visual.html ",
+              "type": "page"
+            },
+            {
               "name": "API v2 Changelog",
               "description": "Changelog for the Lunch Money API v2",
-              "path": "api/v2/v2-version-history.md",
+              "path": "api/v2/version-history.md",
               "type": "page"
             },
             {
               "name": "API v1 Changelog",
-              "description": "Version history for the Lunch Money API v2",
+              "description": "Version history for the Lunch Money API v1",
               "path": "api/v1/changelog.md",
               "type": "page"
             },

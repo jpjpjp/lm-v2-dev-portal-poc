@@ -5,6 +5,53 @@ The Lunch Money API spec uses a modified version of SEMVER for its versioning me
 - The minor version represents the number of main endpoints the current version of the spec supports.  For example, a version of the API that supports the /me, /categories, and /transactions endpoints would have a minor version of 3.
 - The revision number represents the number of updates since the last endpoint was added.  For example, each time changes are made to one of the existing three APIs as described above, the revision number will be bumped.
 
+## v2.8.0
+- A new v2/summary endpoint has been added. This replaces the v1/budgets endpoint, which no longer works with the new budgeting feature.
+- The 'pending' value for `status` in the transactions object has been deprecated.  This was redundant with the `is_pending` boolean property.
+  - A new `is_pending` query parameter has been added to the GET /transactions endpoint.
+- POST /transactions/split/{id} and POST /transactions/group now return a single transaction with children and not an array of transactions.
+- A `custom_metadata` property has been added to the Manual Account object.
+- The maximum length of the Manual Account's `subtype` property has increased from 75 to 100 characters.
+- An empty `description` string may now be passed in the request body for the POST and PUT /categories endpoint
+
+## v2.7.11
+- Added new endpoints for managing transaction file attachments:
+  - POST /transactions/{transaction_id}/attachments - Upload a file to be attached to a transaction
+  - GET /transactions/attachments/{file_id} - Get a signed URL to download the file attachment
+  - DELETE /transactions/attachments/{file_id} - Remove a file attachment from a transaction
+- Added support for file attachments in transaction objects:
+  - The `files` property is now included in transaction objects when `include_files` is set to true
+  - The `files` property contains an array of `transactionAttachmentObject` objects
+  - File metadata (type and name) is properly returned when downloading files
+- The v2 /recurring endpoint has been renamed back to /recurring_items.
+- The `overrides` property has been removed from the transaction object. This ws meant to provide the original info that was overridden by a recurring rule, but turned out to be un-implementable.
+- The bulk PUT /transactions API has been completely redesigned.  It now is similar to the POST /transactions API, taking an array of transactions which must include an id along with any other properties to do be updated.
+- The payee/date/amount transaction duplication logic that is triggered by the `skip_duplicates` request body property on a POST /transactions request will now be applied to plaid accounts as well as manual accounts.
+- Improved readability of Request validation errors. The example responses in the spec and those returned by the mock server have been updated to match those that will be returned by the actual implementation of the v2 API. 
+- The v2 proxy using v1 service has been removed from the spec.
+
+
+## v2.7.10
+- Add a transactionAttachments type that captures details about files attached to a transaction.
+- Modified the behavior of the GET /transactions endpoint:
+  - For performance reasons, transactions returned by this endpoint will, by default, not include `plaid_metadata`, `custom_metadata`, `children`, or `files` properties.  These properties ARE provided by default in the GET /transactions/:id endpoint.
+  - A new `include_children` query parameter has been added.  If set to `true`, transaction groups will include a `children` property with an array of transactions that make up the group.
+  - A new `include_metadata` query parameter has been added.  If set to `true`, transactions returned will include the properties `plaid_metadata` and `custom_metadata`, which will be `null` when metadata is not associated with the transaction.
+  - An `include_files` query parameter is added.  When set to `true`, a `files` property is returned with an array of objects that describe any attachments to the transaction.
+  - For completeness, an `include_split_parents` query parameter is added.  Will override default behavior and return transactions that were split when set.  The split transactions are also returned.  When used in conjunction with the `include_children` parameter, split parents will have a `children` property that also includes the split transactions.
+  - Documented that `include_pending` query param is ignored if `status` query param is also set.
+- Modified the behavior of the GET /transactions/:id endpoint:
+  - A successful response will always include all available transaction details, including `plaid_metadata`, `custom_metadata`, and `files` properties.
+  - When `is_group` or `is_parent` is true in the response, it will also include a `children` property.
+- Modified the response body returned from a successful POST /transactions request:
+  - A `skipped_duplicates` array property will always be returned along with the `transactions` array.
+  - This will include details on any requested transactions that were not inserted due to duplicate detection.
+  - Duplicates will always be flagged if the `manual_account_id` and `external_id` of a requested transaction match existing transactions.
+    - Duplicates may also be flagged if the `skip_duplicates` request body property was set to `true`, and the requested transaction has the same `manual_account_id`, `payee`, `date`, and `amount` of an existing transaction.
+  - The insertTransactionResponseObject is now included in the models section of the documentation.
+- Updated the examples for the PUT /transactions (bulk) endpoint
+- Increased the max length of the `subtype` string that can be set on a manual account object to 75 characters
+  
 ## v2.7.9
 - Updated several type definitions in the spec to use the type `integer` instead of `number` for properties such as ids, orders, and indexes which are always an integer.   Amounts, balances and limits still use type `number`.
 

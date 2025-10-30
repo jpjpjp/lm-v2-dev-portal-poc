@@ -34,6 +34,8 @@
     - [Endpoints that return or operate on an array of transactions](#endpoints-that-return-or-operate-on-an-array-of-transactions)
     - [Endpoints for grouping or ungrouping transactions](#endpoints-for-grouping-or-ungrouping-transactions)
     - [Endpoints for splitting or unsplitting transactions](#endpoints-for-splitting-or-unsplitting-transactions)
+    - [The Transaction Attachment Object](#the-transaction-attachment-object)
+    - [Endpoints for managing file attachments](#endpoints-for-managing-file-attachments)
   - [The Recurring Object](#the-recurring-object)
   - [recurring endpoints](#recurring-endpoints)
   - [The Manual Account Object (formerly Asset Object)](#the-manual-account-object-formerly-asset-object)
@@ -47,454 +49,6 @@
 <div style="color:green">
     Markdown inline css styles
 </div>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        <style>
-            .new { color: green; }
-            .deleted { color: red; }
-            .renamed { color: orange; }
-            .moved { color: blueviolet; }
-        </style>
-
-<div class="container">
-    <h1 style="text-align: center;">Lunch Money v2 API <br> Object Changes</h1>
-    <table class="table table-bordered">
-        <tbody>
-            <tr>
-                <td id="user-object-row"></td>
-                <td><a href="https://lunchmoney.dev/#user-object" target="_blank">v1 User Object</a></td>
-                <td><a href="../#/schemas/userObject" target="_blank">v2 User Object</a></td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="changelog#the-user-object">
-                        User<br>Object<br>Changelog
-                    </a>
-                </td>
-                <td>
-                    <ul>
-                        <li class="renamed">user_name (renamed)</li>
-                        <li class="renamed">user_email (renamed)</li>
-                        <li class="renamed">user_id (renamed)</li>
-                        <li>account_id</li>
-                        <li>budget_name</li>
-                        <li>primary_currency</li>
-                        <li></li>
-                        <li>api_key_label</li>
-                    </ul>
-                </td>
-                <td>
-                    <ul>
-                        <li class="renamed">name (renamed)</li>
-                        <li class="renamed">email (renamed)</li>
-                        <li class="renamed">id (renamed)</li>
-                        <li>account_id</li>
-                        <li>budget_name</li>
-                        <li>primary_currency</li>
-                        <li>debits_as_negative</li>
-                        <li>api_key_label</li>
-                    </ul>
-                </td>
-            </tr>
-            <tr>
-                <td id="category-object-row"></td>
-                <td><a href="https://lunchmoney.dev/#categories-object" target="_blank">v1 Category Object</a></td>
-                <td><a href="../#/schemas/categoryObject" target="_blank">v2 Category Object</a></td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="changelog#the-category-object">
-                        Category<br>Object<br>Changelog
-                    </a>
-                </td>
-                <td>
-                    <ul>
-                        <li>id</li>
-                        <li>name</li>
-                        <li>description</li>
-                        <li>is_income</li>
-                        <li>exclude_from_budget</li>
-                        <li>exclude_from_totals</li>
-                        <li>created_at</li>
-                        <li>updated_at</li>
-                        <li>is_group</li>
-                        <li>group_id</li>
-                        <li class="deleted">group_category_name (deleted)</li>
-                        <li>children</li>
-                        <li>order</li>
-                        <li>archived</li>
-                        <li class="renamed">archived_on (renamed)</li>
-                    </ul>
-                </td>
-                <td>
-                    <ul>
-                        <li>id</li>
-                        <li>name</li>
-                        <li>description</li>
-                        <li>is_income</li>
-                        <li>exclude_from_budget</li>
-                        <li>exclude_from_totals</li>
-                        <li>created_at</li>
-                        <li>updated_at</li>
-                        <li>is_group</li>
-                        <li>group_id</li>
-                        <li></li>
-                        <li>children</li>
-                        <li>order</li>
-                        <li>archived</li>
-                        <li class="renamed">archived_at (renamed)</li>
-                    </ul>
-                </td>
-            </tr>
-            <tr>
-                <td id="tags-object-row"></td>
-                <td><a href="https://lunchmoney.dev/#tags" target="_blank">v1 Tag Object</a></td>
-                <td><a href="../#/schemas/tagObject" target="_blank">v2 Tag Object</a></td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="changelog#The-Tags-Object">
-                        Tag<br>Object<br>Changelog
-                </td>
-                <td>
-                    <ul>
-                        <li>id</li>
-                        <li>name</li>
-                        <li>description</li>
-                        <li></li>
-                        <li></li>
-                        <li>archived</li>
-                        <li></li>
-                    </ul>
-                </td>
-                <td>
-                    <ul>
-                        <li>id</li>
-                        <li>name</li>
-                        <li>description</li>
-                        <li class="new">updated_at (new)</li>
-                        <li class="new">created_at (new)</li>
-                        <li>archived</li>
-                        <li class="new">archived_at (new)</li>
-                    </ul>
-                </td>
-            </tr>
-            <tr>
-                <td id="transaction-object-row"></td>
-                <td><a href="https://lunchmoney.dev/#transaction-object" target="_blank">v1 Transaction Object</a></td>
-                <td><a href="../#/schemas/transactionObject" target="_blank">v2 Transaction Object</a></td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="changelog#The-Transaction-Object">
-                        Transaction<br>Object<br>Changelog
-                    </a>
-                </td>
-                <td>
-                    <ul>
-                        <li>id</li>
-                        <li>date</li>
-                        <li>amount</li>
-                        <li>currency</li>
-                        <li>to_base</li>
-                        <li>recurring_id</li>
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                        <li>payee</li>
-                        <li>category_id</li>
-                        <li>notes</li>
-                        <li>status</li>
-                        <li>is_pending</li>
-                        <li>created_at</li>
-                        <li>updated_at</li>
-                        <li>parent_id</li>
-                        <li class="deleted">has_children (deleted)</li>
-                        <li>children</li>
-                        <li>is_group</li>
-                        <li>group_id</li>
-                        <li class="renamed">asset_id (renamed)</li>
-                        <li>plaid_account_id</li>
-                        <li class="deleted">tags (deleted)</li>
-                        <li>source</li>
-                        <li>external_id</li>
-                        <li>plaid_metadata</li>
-                        <li class="deleted">original_name (deleted)</li>
-                        <li class="deleted">display_name (deleted)</li>
-                        <li class="deleted">display_notes (deleted)</li>
-                        <li class="deleted">recurring_payee (deleted)</li>
-                        <li class="deleted">recurring_description (deleted)</li>
-                        <li class="deleted">recurring_cadence (deleted)</li>
-                        <li class="deleted">recurring_type (deleted)</li>
-                        <li class="deleted">recurring_amount (deleted)</li>
-                        <li class="deleted">recurring_currency (deleted)</li>
-                        <li class="deleted">recurring_granularity (deleted)</li>
-                        <li class="deleted">recurring_quantity (deleted)</li>
-                        <li class="deleted">category_name (deleted)</li>
-                        <li class="deleted">category_group_id (deleted)</li>
-                        <li class="deleted">category_group_name (deleted)</li>
-                        <li class="deleted">is_income (deleted)</li>
-                        <li class="deleted">exclude_from_budget (deleted)</li>
-                        <li class="deleted">exclude_from_totals (deleted)</li>
-                        <li class="deleted">asset_institution_name (deleted)</li>
-                        <li class="deleted">asset_name (deleted)</li>
-                        <li class="deleted">asset_display_name (deleted)</li>
-                        <li class="deleted">asset_status (deleted)</li>
-                        <li class="deleted">plaid_account_id (deleted)</li>
-                        <li class="deleted">plaid_account_name (deleted)</li>
-                        <li class="deleted">plaid_account_mask (deleted)</li>
-                        <li class="deleted">institution_name (deleted)</li>
-                        <li class="deleted">plaid_account_display_name (deleted)</li>
-                        <li class="deleted">account_display_name (deleted)</li>
-                    </ul>
-                </td>
-                <td>
-                    <ul>
-                        <li>id</li>
-                        <li>date</li>
-                        <li>amount</li>
-                        <li>currency</li>
-                        <li>to_base</li>
-                        <li>recurring_id</li>
-                        <li class="new">overrides (new)
-                            <ul>
-                                <li>original_payee</li>
-                                <li>original_category_id</li>
-                                <li>original_notes</li>
-                            </ul>
-                        </li>
-                        <li>payee</li>
-                        <li>category_id</li>
-                        <li>notes</li>
-                        <li>status</li>
-                        <li>is_pending</li>
-                        <li>created_at</li>
-                        <li>updated_at</li>
-                        <li>parent_id</li>
-                        <li class="new">is_parent (new)</li>
-                        <li>children</li>
-                        <li>is_group</li>
-                        <li>group_id</li>
-                        <li class="renamed">manual_account_id (renamed)</li>
-                        <li>plaid_account_id</li>
-                        <li class="new">tag_ids (new)</li>
-                        <li>source</li>
-                        <li>external_id</li>
-                        <li>plaid_metadata</li>
-                        <li class="new">custom_metadata (new)</li>
-                    </ul>
-                </td>
-            </tr>
-            <tr>
-                <td id="manual-account-object-row"></td>
-                <td><a href="https://lunchmoney.dev/#assets" target="_blank">v1 Asset Object</a></td>
-                <td><a href="../#/schemas/manualAccountObject" target="_blank">v2 Manual Account Object</a></td>
-            </tr>
-            <tr>
-                <td>
-                    
-                    <a href="changelog#the-manual-account-object-formerly-asset-object-">
-                        Manual<br>Account<br>Object<br>Changelog
-                    </a>
-                </td>
-                <td>
-                    <ul>
-                        <li>id</li>
-                        <li>name</li>
-                        <li class="renamed">type_name (renamed)</li>
-                        <li class="renamed">subtype_name (renamed)</li>
-                        <li>display_name</li>
-                        <li>balance</li>
-                        <li>currency</li>
-                        <li>to_base</li>
-                        <li>balance_as_of</li>
-                        <li>institution_name</li>
-                        <li></li>
-                        <li class="renamed">exclude_transactions (renamed)</li>
-                        <li>closed_on</li>
-                        <li>created_at</li>
-                        <li></li>
-                    </ul>
-                </td>
-                <td>
-                    <ul>
-                        <li>id</li>
-                        <li>name</li>
-                        <li class="renamed">type (renamed)</li>
-                        <li class="renamed">subtype (renamed)</li>
-                        <li>display_name</li>
-                        <li>balance</li>
-                        <li>currency</li>
-                        <li>to_base</li>
-                        <li>balance_as_of</li>
-                        <li>institution_name</li>
-                        <li class="new">external_id (new) </li>
-                        <li class="renamed">exclude_from_transactions (renamed)</li>
-                        <li>closed_on</li>
-                        <li>created_at</li>
-                        <li class="new">update_at (new)</li>
-                    </ul>
-                </td>
-            </tr>
-            <tr>
-                <td id="plaid-account-object-row"></td>
-                <td><a href="https://lunchmoney.dev/#plaid-accounts-object" target="_blank">v1 Plaid Account Object</a></td>
-                <td><a href="../#/schemas/plaidAccountObject" target="_blank">v2 Plaid Account Object</a></td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="changelog#The-Plaid-Account-Object">
-                        Plaid<br>Account<br>Object<br>Changelog
-                </td>
-                <td>
-                    <ul>
-                        <li>id</li>
-                        <li>date_linked</li>
-                        <li>name</li>
-                        <li>display_name</li>
-                        <li>type</li>
-                        <li>subtype</li>
-                        <li>mask</li>
-                        <li>institution_name</li>
-                        <li>status</li>
-                        <li></li>
-                        <li>limit</li>
-                        <li>balance</li>
-                        <li>currency</li>
-                        <li>to_base</li>
-                        <li>balance_last_update</li>
-                        <li>import_start_date</li>
-                        <li>last_import</li>
-                        <li>last_fetch</li>
-                        <li>plaid_last_successful_update</li>
-                    </ul>
-                </td>
-                <td>
-                    <ul>
-                        <li>id</li>
-                        <li>date_linked</li>
-                        <li>name</li>
-                        <li>display_name</li>
-                        <li >type</li>
-                        <li>subtype</li>
-                        <li>mask</li>
-                        <li>institution_name</li>
-                        <li>status</li>
-                        <li class="new">allow_transaction_modifications (new) </li>
-                        <li>limit</li>
-                        <li>balance</li>
-                        <li>currency</li>
-                        <li>to_base</li>
-                        <li>balance_last_update</li>
-                        <li>import_start_date</li>
-                        <li>last_import</li>
-                        <li>last_fetch</li>
-                        <li>plaid_last_successful_update</li>
-                    </ul>
-                </td>
-            </tr>
-            <tr>
-                <td id="recurring-object-row"></td>
-                <td><a href="https://lunchmoney.dev/#recurring-items-object" target="_blank">v1 Recurring Item Object</a></td>
-                <td><a href="../#/schemas/recurringObject" target="_blank">v2 Recurring Object</a></td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="changelog#the-recurring-object">
-                        Recurring<br>Object<br>Changelog
-                    </a>
-                </td>
-                <td>
-                    <ul>
-                        <li>id</li>
-                        <li>description</li>
-                        <li></li>
-                        <li></li>
-                        <li class="moved">start_date (moved)</li>
-                        <li class="moved">end_date (moved)</li>
-                        <li class="moved">granularity (moved)</li>
-                        <li class="moved">quantity (moved)</li>
-                        <li class="renamed">billing_date (renamed)</li>
-                        <li class="renamed">original_name (renamed)</li>
-                        <li class="moved">amount (moved)</li>
-                        <li class="moved">currency (moved)</li>
-                        <li class="moved">to_base (moved)</li>
-                        <li class="moved">plaid_account_id (moved)</li>
-                        <li class="renamed">asset_id (renamed)</li>
-                        <li></li>
-                        <li class="moved">payee (moved)</li>
-                        <li class="moved">notes (moved)</li>
-                        <li class="moved">category_id (moved)</li>
-                        <li class="deleted">category_group_id (deleted)</li>
-                        <li class="deleted">is_income (deleted)</li>
-                        <li class="deleted">exclude_from_totals (deleted)</li>
-                        <li class="renamed">date</li>
-                        <li></li>
-                        <li class="renamed">occurrences</li>
-                        <li class="renamed">transactions_within_range</li>
-                        <li class="renamed">missing_dates_within_range</li>
-                        <li>created_by</li>
-                        <li>created_at</li>
-                        <li>updated_at</li>
-                        <li>source</li>
-                    </ul>
-                </td>
-                <td>
-                    <ul>
-                        <li>id</li>
-                        <li>description</li>
-                        <li class="new">status (new)</li>
-                        <li class="new">transaction_criteria (new)
-                            <ul>
-                                <li class="moved">start_date (moved)</li>
-                                <li class="moved">end_date (moved)</li>
-                                <li class="moved">granularity (moved)</li>
-                                <li class="moved">quantity (moved)</li>
-                                <li class="renamed">anchor_date (renamed)</li>
-                                <li class="renamed">payee (renamed)</li>
-                                <li class="moved">amount (moved)</li>
-                                <li class="moved">currency (moved)</li>
-                                <li class="moved">to_base (moved)</li>
-                                <li class="moved">plaid_account_id (moved)</li>
-                                <li class="renamed">manual_account_id (renamed)</li>
-                            </ul>
-                        </li>
-                        <li class="new">overrides (new)
-                            <ul>
-                                <li class="moved">payee (moved)</li>
-                                <li class="moved">notes (moved)</li>
-                                <li class="moved">category_id (moved)</li>
-                                    </ul>
-                        </li>
-                        <li></li>
-                        <li></li>
-                        <li class="new">matches (new)
-                            <ul>
-                                <li class="new">request_start_date (new)</li>
-                                <li class="new">request_end_date (new)</li>
-                                <li class="renamed">expected_occurrence_dates</li>
-                                <li class="renamed">found_transactions</li>
-                                <li class="renamed">missing_transaction_dates</li>
-                            </ul>
-                        </li>
-                        <li>created_by</li>
-                        <li>created_at</li>
-                        <li>updated_at</li>
-                        <li>source</li>
-                    </ul>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('table').DataTable();
-    });
-</script>
-
 
 ### Versioning
 
@@ -698,22 +252,26 @@ The values for complex properties, such as objects and arrays that are set in th
 The transaction object has changed significantly in v2. A transaction has properties that reference other objects in Lunch Money such as categories, accounts, and tags. In v1 the details for these related object were "hydrated".  In the context of RESTful APIs, "hydration" generally refers to populating an object with all its data. In the Lunch Money APIs, hydration generally relates to providing the details of associated objects that are also referred to by their IDs in the response body.
 
 
-To optimize the speed (and development time) of the v2 Lunch Money APIs, the transaction object will no longer be hydrated. Categories, accounts, and tags are now returned as IDs only.  Details of these objects can be retrieved by calling the appropriate endpoint using the supplied ID.   Developers are encouraged to maintain a local cache of these objects to reduce the number of API calls.
+To optimize the responsiveness of the v2 Lunch Money APIs, the transaction object will no longer be hydrated. Categories, accounts, and tags are now returned as IDs only.  Details of these objects can be retrieved by calling the appropriate endpoint using the supplied ID.   Developers are encouraged to maintain a local cache of these objects to reduce the number of API calls.
 
 
 Specific changes are:
+- The `amount` continues to be a string that represents the amount of the transaction in whatever currency is specified in the `currency` property of the transaction.
+  - In the v1 API, the optional `debits_as_negative` query param controlled how to interpret the amount.  If this parameter was set to false (the default), a negative `amount` value would indicate a credit transaction.
+  - In the v2 API, this parameter is no longer supported and the value in the `amount` field is set to negative or positive based on the user's `debits_as_negative` property. This setting is true by default
 - The `payee`, `category_id`, and `notes` fields in the returned transaction objects now match the values seen on the transactions page in the GUI.
   - If these values have been changed due to a recurring rule a new `overrides` object will provide info on what the previous values for these fields were.
   - The `display_name` and `display_notes` fields have been removed.
   - Details of the recurring_item that caused the overrides can be found via the `GET /recurring/{id}` method and passing the value from the transaction's `recurring_id` property 
 - Other than `category_id`, no other category related fields are returned.   This includes all the `category_*` fields in the v1 object as well as the `is_income`, `exclude_from_budget`, and `exclude_from_totals` properties which are derived from the category.
-- The `status` property now has only four supported values, `reviewed`, `unreviewed`, `deleted_pending`, and `pending`. 
+- The `status` property now has only three supported values, `reviewed`, `unreviewed`, and `deleted_pending`.
+  - Transactions whose `is_pending` property is true will always have a `status` of `unreviewed`. 
 - The `has_children` property has been removed.
 - A new `is_parent` property has been added.  It is set to `true` for transactions that been split.
-- The `children` property is no longer present on transactions unless they are the parent of a split transaction or returned by the `GET /transactions/group` endpoint.
+- The `children` property is no longer present on transactions unless they are the parent of a split transaction or a transaction group created by grouping multiple transactions together.
 - By default, the parents of transactions that have been split are no longer returned by the `GET /transactions` endpoint.
-  - Parents of a split transaction have the proper ty `is_parent` set to `true`
-  - If a parent transaction is queried directly via the `GET /transactions/{id}`, it will include a `children` property which is an array of IDs of the split transactions.
+  - Parents of a split transaction have the property `is_parent` set to `true`
+  - If a parent transaction is queried directly via the `GET /transactions/{id}`, it will include a `children` property which is an array of of the objects for the split transactions.
   - The ID of parent transactions can be found in the `parent_id` property of split transactions which are returned by default.
 - By default, transactions that have been grouped are no longer returned by the `GET /transactions` endpoint
   - Grouped transactions have the property `is_group` set to `true`.
@@ -722,7 +280,8 @@ Specific changes are:
  - Except for the `plaid_account_id` property, the other v1 Transaction Object properties related to plaid accounts, which were named `plaid_*`, are no longer included and can be found by calling `GET /plaid_account/{id}` endpoint using the value returned in the `plaid_account_id` property.
  - The `plaid_metadata` property is no longer returned by default as part of the v2 Transaction Object. This can be added by explicitly setting the new query parameter, `include_metadata` to `true` on the `GET /transactions/{id}` API.
  - The `tags` property has been replaced by a `tag_ids` property which is a list of tag IDs associated with the transaction.  If no tags are associated with the transaction this will be an empty list.  The other elements of the tag object which were included in the v1 Transaction Object are no longer returned and can be found by calling the `GET /tags` endpoint.
- - A new property `custom_metadata` has been added to the Transaction Object.  This can be added and updated in transactions that are created or modified via the API.
+ - A new property `custom_metadata` has been added to the Transaction Object.  This can be added and updated in transactions that are created or modified via the API. 
+ - A new property `files` has been added to the Transaction Object.  It is an array of objects that describe any files that have been attached to the transaction.
 
  
 [View v1/v2 differences](./changelog-visual#transaction-object-row)
@@ -738,8 +297,11 @@ Specific changes are:
  #### Endpoints that return or operate on a single transaction
 
 - **`GET/transactions/{id}`** has the following changes [View Docs](../v2/#tag/transactions/GET/transactions/{id})
-  - This endpoint now supports a query parameter `include_metadata` to request that the returned transaction includes any metadata associated it, including data associated with plaid transactions or `custom_metadata` added via the API.
-    - If plaid_metadata is available the returned transaction will include a `plaid_metadata` property with the json metadata associated with the transactions.
+  - This endpoint returns all the details associated with the requested object, including properties that are not returned by the bulk `GET /transactions` endpoint.  These include:
+    - `plaid_metadata` 
+    - `custom_metadata`
+    - `files`
+    - `children` - if the returned transaction has either the `is_parent` or `is_group` property set to `true`
 - **`PUT /transactions/{id}`** has the following changes [View Docs](../v2/#tag/transactions/PUT/transactions/{id})
   - This endpoint now expects a request body that specifies the properties of the transaction to update.  Any property the belongs to the transaction object may be passed in the request body, but "system set" properties such as "id" or "updated_at" will be ignored.
   - This endpoint no longer accepts the split parameter. Use [POST /transactions/split/{id}](../v2/#tag/transactions-split/POST/transactions/split/{id}) to split transactions
@@ -753,12 +315,16 @@ Specific changes are:
  #### Endpoints that return or operate on an array of transactions
 
 - **`GET /transactions`** has the following changes [View Docs](../v2/#tag/transactions-bulk/GET/transactions)
-  - Parents of split transaction are no longer returned.   This matches the behavior of the transactions page in the Lunch Money GUI.   Parents of split transactions can be queried by passing the values of the `parent_id` property of a split transaction to the `GET /transactions/{id}` endpoint
+  - To improve responsiveness, the following properties are not included in the returned Transation Objects by default:
+    - `plaid_metadata` - enable via the `include_metadata` query parameter
+    - `custom_metadata` - enable via the `include_metadata` query parameter
+    - `children` - enable via the `include_children` query parameter
+    - `files` - enable via the `include_files` query parameter
+  - Parents of split transaction are no longer returned by default. This matches the behavior of the transactions page in the Lunch Money GUI.
+    - A query parameter `include_split_parents` can be set to true to override this behavior.
   - Transactions that have been grouped are no longer returned. Only the created transaction group is returned by default.  Transactions that were grouped can be obtained by passing the ID of a transaction with the `is_group` property set to `true` to the `GET /transactions/group/{id}` endpoint.  
   - The v1 query parameter `pending` has been renamed `include_pending` and can be set to "true" to have pending transactions included in the response.
     - As with the v1 `GET /transactions` endpoint the v2 endpoint does not return pending transactions by default.  
-  - A new query parameter `include_custom_metadata` has been added.  WHen set to "true" the returned transaction objects will include a `custom_metadata` property.
-    - Custom metadata can be included or updated to transactions created or modified via the API.
 - **`POST /transactions`** has the following changes [View Docs](../v2/#tag/transactions-bulk/POST/transactions)
   - The following properties have been renamed in the Create Transaction Object
     - `asset_id` is now `manual_account_id`
@@ -801,6 +367,34 @@ Specific changes are:
 - **`DELETE /transactions/split/{parent_id}`** endpoint has been added [View Docs](../v2/#tag/transactions-split/DELETE/transactions/split/{id})
   - Pass the id of a split transaction's `parent_id` property to unsplit a transaction. 
   - This replaces the v1 `POST /transactions/unsplit` endpoint
+
+#### The Transaction Attachment Object
+
+The `transactionAttachmentObject` is a new object type that represents a file attached to a transaction. It has the following properties:
+- `id` (integer) - The unique identifier for the attachment
+- `uploaded_by` (integer) - The ID of the user who uploaded the file
+- `name` (string) - The original filename of the uploaded file
+- `type` (string) - The MIME type of the file
+- `size` (integer) - The size of the file in bytes
+- `notes` (string, optional) - Any notes associated with the attachment
+- `created_at` (string) - The date and time when the file was uploaded (in ISO 8601 format)
+
+#### Endpoints for managing file attachments
+
+- **`POST /transactions/{transaction_id}/attachments`** [View Docs](../v2/#tag/transactions/POST/transactions/{transaction_id}/attachments)
+  - This endpoint allows you to attach a file to a transaction
+  - The file is uploaded as a multipart/form-data request
+  - Optional notes can be included with the file
+  - Returns the created file attachment object
+- **`GET /transactions/attachments/{file_id}`** [View Docs](../v2/#tag/transactions/GET/transactions/attachments/{file_id})
+  - Returns details about a file attachment, including the transaction it's attached to
+  - The response includes the file metadata and the ID of the transaction it belongs to
+- **`GET /transactions/attachments/{file_id}/url`** [View Docs](../v2/#tag/transactions/GET/transactions/attachments/{file_id}/url)
+  - Returns a pre-signed URL that can be used to download the file
+  - The URL is temporary and should be used immediately
+- **`DELETE /transactions/attachments/{file_id}`** [View Docs](../v2/#tag/transactions/DELETE/transactions/attachments/{file_id})
+  - Removes a file attachment from its transaction
+  - Returns a 204 No Content response on success
 
 ### The Recurring Object 
 
@@ -858,7 +452,8 @@ The properties of this object are the same as those for the v1 `asset` with the 
   - `subtype_name` has been renamed `subtype`.
   - `exclude_transactions` has been renamed `exclude_from_transactions`.
   - `updated_at` property has been added.
-  - `external_id` property has been added.
+  - `external_id` property has been added. This can be added and updated only via the API.
+  - `custom_metadata` property has been added. This may be any valid json object less than 4mb and can be added and updated only via the API.
     
 [View v1/v2 differences](./changelog-visual#manual-account-object-row)
 
