@@ -26,6 +26,12 @@
           "type": "folder",
           "children": [
             {
+              "name": "MDX Check",
+              "description": "Test page for MDX",
+              "path": "guides/mdx-check.mdx",
+              "type": "page"
+            },
+            {
               "name": "Getting Started",
               "description": "First steps to using the Lunch Money API",
               "path": "guides/_getting_started.md",
