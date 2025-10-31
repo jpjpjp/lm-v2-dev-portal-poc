@@ -11,14 +11,14 @@ Since changes to your data made by the API are permanent, the best way to begin 
 During the process of creating a new budget you may choose to copy your existing categories and tags to make your data more familiar:
 
 <scalar-image
-  src="../static/CopyCategoriesAndTags.png"
+  src="https://lm-v2-api-evaluation-service.apidocumentation.com/lunch-money-developer-docs/static/CopyCategoriesAndTags.png"
   alt="Copy Categories and Tags">
 </scalar-image>
 
 Alternatively, you may ask Lunch Money to populate your new budget with demo data which will include approximately three months of transaction data for you to test with:
 
 <scalar-image
-  src="../static/DemoData.png"
+  src="https://lm-v2-api-evaluation-service.apidocumentation.com/lunch-money-developer-docs/DemoData.png"
   alt="Demo Data">
 </scalar-image>
 
@@ -31,7 +31,7 @@ You can create an access token by going to [the developers page in the Lunch Mon
 In the upper right hand corner of the page, you can give your access token a label and specify what you are using it for. Then hit the button "Request Access Token":
 
 <scalar-image
-  src="../static/RequestAccessToken.png"
+  src="https://lm-v2-api-evaluation-service.apidocumentation.com/lunch-money-developer-docs/static/RequestAccessToken.png"
   alt="Request Access Token">
 </scalar-image>
 
@@ -46,7 +46,7 @@ Later, when you are more comfortable with the API, you can repeat this process t
 When you start to write code that makes API calls you will need to include this token in each request using an Authorization header that includes your token. Here is an example curl request:
 
 ```bash
-curl --location 'https://api-v2.lunchmoney.app/ /me' \
+curl --location 'https://api-v2.lunchmoney.app/v2/me' \
 --header 'Authorization: Bearer <YOUR_ACCESS_TOKEN>'
 ```
 

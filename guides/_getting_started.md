@@ -1,97 +1,70 @@
-# Getting Started
+# Getting Started with the Lunch Money API
 
-Welcome to the v2 Lunch Money developer API! This v1 API has enabled the Lunch Money user community to build a broad set of tools and plug-ins to complement their Lunch Money experience and help other users.  This new version of the API addresses a broad set of feedback we have received, and has been designed iteratively based on community interaction with each design update.
+Welcome to the Lunch Money developer API! This API has enabled the Lunch Money user community to build a broad set of tools and plug-ins to complement their Lunch Money experience and help other users. This guide will help you get started using the Lunch Money API.
 
-While this implementation of the v2 API has been tested extensively by our internal team, we strongly recommend that reviewers use test data on their initial interactions with this working version.
+Most users interact with their Lunch Money data using the Web or Mobile applications.  Making API calls is like using these apps. You can make API calls that get your data for you, allowing you to do other things with it, like generating your own charts or simply archiving your data. You can also make API calls that change or delete your data. Any changes you make are permanent, just like they would be if you made changes using the Mobile or Web apps, so it's important to be careful when you start using the API.
 
----
+## Create a Test Budget
 
-## Creating a Test Budget
+Since changes to your data made by the API are permanent, the best way to begin interacting with the API is to [create a new test budget](https://support.lunchmoney.app/miscellaneous/unlimited-budgeting-accounts) in your existing Lunch Money account.  As you start using the API you can interact with this test budget and ensure that your real data is not modified.
 
-The best way to being interacting with the new API is to [create test budget](https://support.lunchmoney.app/miscellaneous/unlimited-budgeting-accounts) in your existing Lunch Money account.  During this step you may choose to copy your existing categories and tags to make your data more familiar:
+During the process of creating a new budget you may choose to copy your existing categories and tags to make your data more familiar:
 
-![Copy Categories and Tags](../images/CopyCategoriesAndTags.jpg)
-
+<scalar-image
+  src="../static/CopyCategoriesAndTags.png"
+  alt="Copy Categories and Tags">
+</scalar-image>
+http://localhost:7970/lunch-money-developer-docs/static/CopyCategoriesAndTags.png
 Alternatively, you may ask Lunch Money to populate your new budget with demo data which will include approximately three months of transaction data for you to test with:
 
-![Demo Data](../images/DemoData.png)
+![Demo Data](../static/DemoData.png)
 
+## Getting an access token
+Lunch Money API requests are authenticated using the Bearer Token authentication method. In plain english this means that you will pass a token associated with your budget to Lunch Money, so we know that which budget to operate on, and know that the request came from someone who can access that budget.
 
-During this time, please use this API at your own risk as and be aware that changes made to your data via the API are irreversible.
+You can create an access token by going to [the developers page in the Lunch Money web app](https://my.lunchmoney.app/developers). Look at the green circle in the upper right hand corner and make sure that it is showing the test budget that you just created. If you aren't sure which budget is active you can click on the green circle to bring up the "Switch Accounts" dialog.  This will show you the full names of all the budgets associated with your account. Select the test budget you created. 
 
-If you would like to review and provide feedback on the v2 API design in progress, please [email our developer advocate](mailto:jp@lunchmoney.app).
+In the upper right hand corner of the page, you can give your access token a label and specify what you are using it for.  Then hit the button "Request Access Token":
 
-You can also [join the Lunch Money community on Discord](https://lunchmoney.app/discord) and provide feedback in the [Developer API Channel](https://discord.com/channels/842337014556262411/1134594318414389258).
+![Request Access Token](../static/RequestAccessToken.png)
 
-You can find these docs [on Github](https://github.com/lunch-money/developers), so if you see a mistake or something that could be improved, feel free to open a pull request!
+After you do this the web page will show you a long alphanumeric string. This is your access token. Hit the copy button and save this token somewhere safe. It is only shown to you when you create it.
 
-## Connecting to the Lunch Money API
+Treat your access tokens like passwords and don't share them with anyone that you don't trust. If you ever worry that your access token has been compromised you can always come back to this page and hit the Revoke button. (This is a good reason to always give your access token a name.)
 
-### Connect to the server
+Later, when you are more comfortable with the API, you can repeat this process to create and access token for your real budget.
 
-The Lunch Money API endpoint is: `https://dev.lunchmoney.app`
+## Using your access token
 
-<aside class="notice">
-For POST requests, ensure you set Content-Type to application/json
-</aside>
+When you start to write code that makes API calls you will need to include this token in each request using an Authorization header that includes your token. Here is an example curl request:
 
-
-## Authentication
-
-> Use Bearer Tokens in your requests like this:
-
-> Recommended
-
-```text
-https://dev.lunchmoney.app/v1/categories
-
-with the Authorization header field set to Bearer YOURACCESSTOKEN
+```bash
+curl --location 'http://localhost:3002/me' \    # TODO fix URL                                                                                
+--header 'Authorization: Bearer <YOUR_ACCESS_TOKEN'
 ```
 
-> Not Recommended
+If this doesn't make sense yet, that's OK, there is an easier way to use your access token to make requests. Head over to the [API Reference Documentation](../lunch-money-api-v2-reference#description/overview). In the upper right hand corner you'll see a box that says "Server", and below that a box which says "Authentication".  In the Authentication box you'll see a row that says "Bearer Token:".  Simply paste your access token into that box. Once that is set up you make API requests directly from the documentation.
 
-```text
-https://dev.lunchmoney.app/v1/categories?access_token=YOURACCESSTOKEN
-```
+Try this with the `/me` endpoint by scrolling down to the section called "Get Current User" and hitting the "Test Request" button.  This will pop up a dialog box that you can use to send an API request. This is a simple endpoint, so just hit the "Send" button.  You should see a response that includes your name, and the name of your test budget.
 
-Lunch Money API requests are authenticated using the Bearer Token authentication method.
-
-### Getting an access token
-
-Get your access token by going to [the developers page in the Lunch Money app](https://my.lunchmoney.app/developers).
+From here you can explore the rest of the Lunch Money API and start thinking about what you might do with it.
 
 ## What should I build?
+Once you have a basic understanding of how the API works, there are few things to think about next.  The first think to consider is what you want to build.
 
-**Great question!** We’ve tried to expose the minimum endpoints needed to enable you to build powerful products and extensions.
+Many users have built Transaction Import tools. These are especially useful in cases where you bank isn't supported by Plaid. But does your bank offer an API? You can build a bridge between Lunch Money and your bank to import transactions automatically.
 
-Here are a few ideas of what you can build:
+Other user like to export their transactions into their own tools like a custom spreadsheet or other interface. If you have something like this you can use the API to sync data for personalized viewing and analytics.
 
-### Basic use cases
+This is just the tip of the iceberg. If you are looking for more inspiration or SDKs to help you build in your favorite programming language check out the [Awesome Lunch Money Projects Page](https://lunchmoney.dev/#awesome-projects) on github.  You might also get inspired by reading about some of the community developers we have featured in our [Community Newsletter](https://lunchmoney.app/blog?filter=community-news)
 
-**Integration with your bank**
+## I still need help!
 
-Does your bank offer an API? You can build a bridge between Lunch Money and your bank to import transactions automatically.
+If you still aren't sure how to get started, we have other resources to help. 
 
-**Sync Lunch Money data to your personal interface**
+A great way to find get unstuck is to [join the Lunch Money community on Discord](https://lunchmoney.app/discord) and send a question in the [Developer API Channel](https://discord.com/channels/842337014556262411/1134594318414389258).
 
-If you have your own spreadsheet or other interface, use the API to sync data for personalized viewing and analytics.
+You can also [email our developer advocate](mailto:jp@lunchmoney.app) to get help as well.
 
-### Specific use cases with high demand:
+These are also great channels to provide feedback! Our v2 API was built based on feedback from our developer community. Your ideas might help us make them even better, so please don't hesitate to reach out.
 
-**Amazon receipt matcher**
-
-Do you make a lot of Amazon purchases? I'm sure by now you know how frustrating it is to try to identify exactly what the expense is for! Build an Amazon receipt matcher that pulls in your Amazon purchase history and matches on transactions in Lunch Money and updates the notes.
-
-<aside class="notice">
-Note: apparently Amazon’s API doesn't expose consumer transactions, so to achieve this, you may need to employ another method of getting transaction details (ideas: email forwarder, chrome extension/screen scraper…)
-</aside>
-
-**Venmo integration via email**
-
-The lack of a Venmo and Plaid integration is frustrating for many of our users and is largely out of our control.  Since Venmo sends an email notification every time you send or receive money, build a service that enables users to forward their Venmo notification emails for parsing and insertion into Lunch Money!
-
-**Zillow integration**
-
-Create an integration that automatically updates the value of a real estate property in Lunch Money.
-
----
