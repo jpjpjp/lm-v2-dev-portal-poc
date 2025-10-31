@@ -6,7 +6,9 @@ info:
     This is a version of the Lunch Money API described using the the OpenAPI 3.X
     specification.  You can access the OpenAPI specification itself using the links above.
 
-    A working version of this API is now available through these docs or directly at https://api-v2.lunchmoney.app/v2.
+    A working version of this API is now available through these docs, or directly at:
+    `https://api-v2.lunchmoney.app/v2`
+
     This service has only had internal testing so users are **strongly encouraged** to create a test budget with example data as the first step to interacting with the v2 API.
     See the [Getting Started](https://lm-v2-api-evaluation-service.apidocumentation.com/lunch-money-developer-docs/guides/getting-started) guide for more information.
 
@@ -14,11 +16,11 @@ info:
     This enables users to become familiar with the API without having to create an access token, and eliminates the possibility of modifying real data.
     To access this endpoint select the "Static Mock v2 Lunch Money API Server" from the "Server" dropdown to the right. When using this server, set your Bearer token to any string with 11 or more characters.
 
-    If you have been providing feedback on the API during our iterative design process, THANK YOU. We are happy to provide the opportunity to interact with a working service built based on your feedback.
+    If you have been providing feedback on the API during our iterative design process, THANK YOU. We are happy to provide the opportunity to finally interact with the working API that was built based on your feedback.
     
     If you are new to the v2 API, you may wish to review the [v2 API Overview of Changes](https://lm-v2-api-evaluation-service.apidocumentation.com/lunch-money-developer-docs/reference/api-v2-overview-and-comparison-to-v1).
 
-    The v2 API is NOT backwards compatible with the v1 API. Developers are encouraged to review the [Migration Guide](https://lm-v2-api-evaluation-service.apidocumentation.com/lunch-money-developer-docs/apis/v1/migrating-to-v2) to understand the changes and plan their migration.
+    The v2 API is NOT backwards compatible with the v1 API. Developers are encouraged to review the [Migration Guide](https://lm-v2-api-evaluation-service.apidocumentation.com/lunch-money-developer-docs/legacy-apis/migrating-from-api-v1-to-v2) to understand the changes and plan their migration.
 
   termsOfService: https://lunchmoney.dev/#current-status
   contact:
