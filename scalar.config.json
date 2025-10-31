@@ -65,8 +65,8 @@
           "children": [
             {
               "name": "Migrating from API v1 to v2",
-              "description": "Legacy Lunch Money API Docs",
-              "path": "api/v1/migrating_from_v1_to_v2.md",
+              "description": "Migrating from API v1 to v2",
+              "path": "api/v1/migrating-to-v2.md",
               "type": "page"
             },
             {

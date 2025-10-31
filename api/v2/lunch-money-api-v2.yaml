@@ -3838,7 +3838,7 @@ paths:
               summary: Example of an id that doesn't exist
               value: 543210
       responses:
-        "201":
+        "200":
           description: Category Object with the requested category or category group.
           content:
             application/json:

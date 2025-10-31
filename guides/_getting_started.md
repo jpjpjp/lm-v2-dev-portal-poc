@@ -1,12 +1,21 @@
 # Getting Started
 
-Welcome to the Lunch Money developer API! We created this to enable the user and the community to build rich plug-ins to complement their Lunch Money experience.
+Welcome to the v2 Lunch Money developer API! This v1 API has enabled the Lunch Money user community to build a broad set of tools and plug-ins to complement their Lunch Money experience and help other users.  This new version of the API addresses a broad set of feedback we have received, and has been designed iteratively based on community interaction with each design update.
+
+While this implementation of the v2 API has been tested extensively by our internal team, we strongly recommend that reviewers use test data on their initial interactions with this working version.
 
 ---
 
-## Current Status
+## Creating a Test Budget
 
-The developer API is officially in open public beta. Based on feedback received we have begun design on a v2 API.
+The best way to being interacting with the new API is to [create test budget](https://support.lunchmoney.app/miscellaneous/unlimited-budgeting-accounts) in your existing Lunch Money account.  During this step you may choose to copy your existing categories and tags to make your data more familiar:
+
+![Copy Categories and Tags](../images/CopyCategoriesAndTags.jpg)
+
+Alternatively, you may ask Lunch Money to populate your new budget with demo data which will include approximately three months of transaction data for you to test with:
+
+![Demo Data](../images/DemoData.png)
+
 
 During this time, please use this API at your own risk as and be aware that changes made to your data via the API are irreversible.
 
