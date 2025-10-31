@@ -4,7 +4,7 @@ info:
   description: |-
     ## Overview
     This is a version of the Lunch Money API described using the the OpenAPI 3.X
-    specification. 
+    specification.  You can access the OpenAPI specification itself using the links above.
 
     The goal of this project is to validate an "API Design First" approach
     for the Lunch Money API, which should allow us to gather developer feedback
@@ -28,6 +28,8 @@ info:
   version: 2.8.0
 
 servers:
+  - url: https://api-v2.lunchmoney.app/v2
+    description: Working v2 Lunch Money API Server
   - url: http://localhost:3000/v2
     description: Static Mock v2 Lunch Money API Server
       # This service implements the v2 API using static mock data. Requests to POST/PUT/DELETE endpoints are honored and return 
