@@ -6,9 +6,6 @@ We're happy to announce that the Lunch Money v2 API is now available for communi
 
 You can now explore the API directly from the [API Playground in these docs]((https://lm-v2-api-evaluation-service.apidocumentation.com/lunch-money-api-v2-reference)). From here you can interact with a mock service to understand how the API functions without modifying any actual Lunch Money data. You can also access a working implementation of the v2 API. We strongly encourage reviewers to [create a test budget with example data](https://lm-v2-api-evaluation-service.apidocumentation.com/lunch-money-developer-docs/guides/getting-started)) as the first step to interacting with the v2 API.
 
-<scalar-page-link title="budget"filepath="_getting_started.md#create-a-test-budget">
-</scalar-page-link>
-
 
 ## Things to look for
 
