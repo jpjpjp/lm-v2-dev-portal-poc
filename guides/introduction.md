@@ -33,6 +33,3 @@ We are also interested to hear your feedback on this proposed Developer Portal. 
 
 Please don't hesitate to reach out with any feedback via email or discord.   We are so excited to finally get the latest API into your hands!
 
-http://localhost:7970/lunch-money-developer-docs/guides/getting-started
-http://localhost:7970/lunch-money-developer-docs/guides/_getting_started.md#create-a-test-budget
-http://localhost:7970/lunch-money-developer-docs/_getting_started.md#create-a-test-budget
