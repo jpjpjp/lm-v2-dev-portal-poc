@@ -1,6 +1,4 @@
-# Introduction
-
-## Welcome to the new Lunch Money Developer Portal Preview
+# Welcome to the Lunch Money Developer Portal Preview
 
 We're happy to announce that the Lunch Money v2 API is now available for community developer testing. This version addresses much of the feedback we received from the developer community about our API, including the request to provide an OpenAPI Specification for the API.
 
@@ -15,7 +13,7 @@ While it's never too late to provide feedback on the API design itself, we are p
 - doc errors in general (spelling, grammar, you name it!)
 - unexpected behavior (500 responses, etc)
   
-The best way to get to provide feedback is to [join our Discord community](https://discord.gg/vSz6jjZuj8) and chat with us in the `💻-developer-api` channel! 
+The best way to provide feedback is to [join our Discord community](https://discord.gg/vSz6jjZuj8) and chat with us in the [`💻-developer-api`](https://discord.com/channels/842337014556262411/1134594318414389258) channel! 
 
 You can also [email our Developer Advocate](mailto:jp@lunchmoney.app).
 

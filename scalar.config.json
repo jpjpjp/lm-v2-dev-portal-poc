@@ -15,7 +15,7 @@
       "sidebar": [
         {
           "name": "Introduction",
-          "description": "Welcome to the Lunch Money Developer Developer Portal.",
+          "description": "Introduction",
           "path": "guides/introduction.md",
           "type": "page"
         },
@@ -178,6 +178,7 @@
     "logo": {
       "darkMode": "https://lunchmoney.dev/images/logo-9c134457.png",
       "lightMode": "https://lunchmoney.dev/images/logo-9c134457.png"
-    },
-    "footer": "This is a test footer"
-  }}
+    }
+  },
+  "theme": "purple"
+}

@@ -31,11 +31,10 @@ Alternatively, you may ask Lunch Money to populate your new budget with demo dat
 
 Lunch Money API requests are authenticated using the Bearer Token authentication method. In plain english this means that you will pass a token associated with your budget to Lunch Money, so we know that which budget to operate on, and know that the request came from someone who can access that budget.
 
-<scalar-button
+<Button
   title="Go to Developers Page"
-  href="https://my.lunchmoney.app/developers"
-  icon="phosphor/regular/key">
-</scalar-button>
+  href="https://my.lunchmoney.app/developers">
+</Button>
 
 You create an access token by going to [the developers page in the Lunch Money web app](https://my.lunchmoney.app/developers). Look at the green circle in the upper right hand corner and make sure that it is showing the test budget that you just created. If you aren't sure which budget is active you can click on the green circle to bring up the "Switch Accounts" dialog. This will show you the full names of all the budgets associated with your account. Select the test budget you created.
 
@@ -74,11 +73,10 @@ curl --location 'https://api-v2.lunchmoney.app/v2/me' \
 
 Head over to the [API Reference Documentation](../lunch-money-api-v2-reference#description/overview). In the upper right hand corner you'll see a box that says "Server", and below that a box which says "Authentication". In the Authentication box you'll see a row that says "Bearer Token:". Simply paste your access token into that box. Once that is set up you make API requests directly from the documentation.
 
-<scalar-button
+<Button
   title="Open API Reference"
-  href="../lunch-money-api-v2-reference#description/overview"
-  icon="phosphor/regular/book-open">
-</scalar-button>
+  href="../lunch-money-api-v2-reference#description/overview">
+</Button>
 
 Try this with the `/me` endpoint by scrolling down to the section called "Get Current User" and hitting the "Test Request" button. This will pop up a dialog box that you can use to send an API request. This is a simple endpoint, so just hit the "Send" button. 
 
@@ -90,19 +88,15 @@ From here you can explore the rest of the Lunch Money API and start thinking abo
 
 If you still aren't sure how to get started, we have other resources to help.
 
-<scalar-row>
-  <scalar-button
-    title="Join Discord"
-    href="https://lunchmoney.app/discord"
-    icon="phosphor/regular/chat-circle">
-  </scalar-button>
+<Button
+  title="Join Discord"
+  href="https://lunchmoney.app/discord">
+</Button>
 
-  <scalar-button
-    title="Email Developer Advocate"
-    href="mailto:jp@lunchmoney.app"
-    icon="phosphor/regular/envelope">
-  </scalar-button>
-</scalar-row>
+<Button
+  title="Email Developer Advocate"
+  href="mailto:jp@lunchmoney.app">
+</Button>
 
 A great way to get unstuck is to [join the Lunch Money community on Discord](https://lunchmoney.app/discord) and send a question in the [Developer API Channel](https://discord.com/channels/842337014556262411/1134594318414389258).
 
