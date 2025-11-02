@@ -4,32 +4,38 @@ Welcome to the Lunch Money developer API! This API has enabled the Lunch Money u
 
 Most users interact with their Lunch Money data using the Web or Mobile applications. Making API calls is another way to interact with your Lunch Money data. You can make API calls that **get** your data for you, allowing you to do other things with it, like generating your own charts or simply archiving your data. You can also make API calls that **change** or **delete** your data. Any changes you make are permanent, just like they would be if you made changes using the Mobile or Web apps.
 
-<p></p>
-<scalar-callout type="warning">
-⚠️ **Important**: Changes made via the API are permanent and cannot be undone. Always use a test budget when getting started.
-</scalar-callout>
+:::scalar-callout{type="warning"}
+**Important**: Changes made via the API are permanent and cannot be undone. Always use a test budget when getting started.
+:::
 
 ## Create a Test Budget
 
 Since changes to your data made by the API are permanent, the best way to begin interacting with the API is to [create a new test budget](https://support.lunchmoney.app/miscellaneous/unlimited-budgeting-accounts) in your existing Lunch Money account. As you start using the API you can interact with this test budget and ensure that your real data is not modified.
 
-During the process of creating a new budget you may choose to copy your existing categories and tags to make your data more familiar:
+<scalar-tabs>
 
-<scalar-image
-  src="https://raw.githubusercontent.com/jpjpjp/lm-v2-dev-portal-poc/main/images/CopyCategoriesAndTags.jpg"
-  alt="Copy Categories and Tags">
-</scalar-image>
+<scalar-tab title="Open the Budgets Window">
 
-Alternatively, you may ask Lunch Money to populate your new budget with demo data which will include approximately three months of transaction data for you to test with:
+Click on the green circle in the upper right hand corner in the Lunch Money Web App
+![Green Budgets Icon](/images/green_budget.png)
+</scalar-tab>
 
-<scalar-image
-  src="https://raw.githubusercontent.com/jpjpjp/lm-v2-dev-portal-poc/main/images/DemoData.png"
-  alt="Demo Data">
-</scalar-image>
+<scalar-tab title="Create a New Budget">
+Click on the "Create a New Budget Account" link and give your new budget a name like "API Test Budget"
+![Create New Budget](/images/new_budget.png)
+</scalar-tab>
+
+<scalar-tab title="Add Test Data">
+Choose the option to "Set up Demo". This will add categories, accounts, tags and several months worth of transactions to your new budget.
+![Add Demo Data](/images/DemoData.png)
+</scalar-tab>
+
+</scalar-tabs>
+
 
 ## Getting an access token
 
-Lunch Money API requests are authenticated using the Bearer Token authentication method. In plain english this means that you will pass a token associated with your budget to Lunch Money, so we know that which budget to operate on, and know that the request came from someone who can access that budget.
+Lunch Money API requests are authenticated using the Bearer Token authentication method. In plain english this means that you will pass a token associated with your budget with each API request. This tells the platform which budget to operate on, and validates that the request came from someone who can access that budget.
 
 <Button
   title="Go to Developers Page"
@@ -48,12 +54,12 @@ In the upper right hand corner of the page, give your access token a label and s
 After you do this the web page will show you a long alphanumeric string. This is your access token. Hit the copy button and save this token somewhere safe. It is only shown to you when you create it.
 
 Later, when you are more comfortable with the API, you can repeat this process to create and access token for your real budget.
-<p></p>
-<scalar-callout type="success">
-✅ **Security Best Practice**: Treat your access tokens like passwords and don't share them with anyone that you don't trust. If you ever think that your access token has been compromised you can always come back to this page and hit the Revoke button.
-</scalar-callout>
+
+:::scalar-callout{type="success"}
+**Security Best Practice**: Treat your access tokens like passwords and don't share them with anyone that you don't trust. If you ever think that your access token has been compromised you can always come back to this page and hit the Revoke button.
+:::
 <scalar-callout type="info">
-💡 **Tip**: Give your access token a descriptive name so you can easily identify and revoke it later if needed.
+**Tip**: Give your access token a descriptive name so you can easily identify and revoke it later if needed.
 </scalar-callout>
 
 
@@ -68,15 +74,15 @@ curl --location 'https://api-v2.lunchmoney.app/v2/me' \
 ```
 
 <scalar-callout type="info">
-💡 **Looks strange?**: If this doesn't make sense yet, that's OK! There's an easier way to test the API.
+**Looks strange?**: If this doesn't make sense yet, that's OK! There's an easier way to test the API.
 </scalar-callout>
 
-Head over to the [API Reference Documentation](../lunch-money-api-v2-reference#description/overview). In the upper right hand corner you'll see a box that says "Server", and below that a box which says "Authentication". In the Authentication box you'll see a row that says "Bearer Token:". Simply paste your access token into that box. Once that is set up you make API requests directly from the documentation.
+Head over to the [API Reference Documentation](/lunch-money-api-v2-reference). In the upper right hand corner you'll see a box that says "Server", and below that a box which says "Authentication". In the Authentication box you'll see a row that says "Bearer Token:". Simply paste your access token into that box. Once that is set up you make API requests directly from the documentation.
 
-<Button
+<scalar-button
   title="Open API Reference"
-  href="../lunch-money-api-v2-reference#description/overview">
-</Button>
+  href="/lunch-money-api-v2-reference">
+</scalar-button>
 
 Try this with the `/me` endpoint by scrolling down to the section called "Get Current User" and hitting the "Test Request" button. This will pop up a dialog box that you can use to send an API request. This is a simple endpoint, so just hit the "Send" button. 
 

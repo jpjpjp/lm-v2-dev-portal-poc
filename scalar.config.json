@@ -2,11 +2,14 @@
   "$schema": "https://cdn.scalar.com/schema/scalar-config.json",
   "subdomain": "lm-v2-api-evaluation-service",
   "publishOnMerge": true,
+  "assetsDir": "assets",
+  "insertPageTitles": false,
   "siteMeta": {
     "title": "Lunch Money Developer Portal",
     "description": "Tools and resources for developers using the Lunch Money API.",
     "favicon": "https://lunchmoney.dev/images/logo-9c134457.png"
   },
+  "theme": "moon",
   "guides": [
     {
       "name": "Lunch Money Developer Docs",
@@ -27,8 +30,8 @@
           "children": [
             {
               "name": "Getting Started",
-              "description": "First steps to using the Lunch Money API",
-              "path": "guides/_getting_started.mdx",
+              "description": "Getting Started",
+              "path": "guides/getting_started.md",
               "type": "page"
             },
             {
@@ -179,6 +182,5 @@
       "darkMode": "https://lunchmoney.dev/images/logo-9c134457.png",
       "lightMode": "https://lunchmoney.dev/images/logo-9c134457.png"
     }
-  },
-  "theme": "purple"
+  }
 }
